@@ -1,3 +1,5 @@
+import 'package:client/lobby/lobby.dart';
+import 'package:client/myPage/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -28,7 +30,10 @@ class FloatingButton extends StatelessWidget {
               child: Icon(Icons.home),
               backgroundColor: Colors.red,
               label: 'LOBBY',
-              // labelStyle: TextTheme(fontSize: 18.0),
+              onTap: () {
+                Navigator.push(context, 
+                  MaterialPageRoute(builder: (BuildContext context) => Lobby()));
+              },
             ),
             SpeedDialChild(
               child: Icon(Icons.bar_chart),
@@ -40,7 +45,10 @@ class FloatingButton extends StatelessWidget {
               child: Icon(Icons.account_circle),
               backgroundColor: Colors.green,
               label: 'MY PAGE',
-              // labelStyle: TextTheme(fontSize: 18.0),
+              onTap: () {
+                Navigator.push(context, 
+                  MaterialPageRoute(builder: (BuildContext context) => MyPage()));
+              },
             ),
           ],
         );
