@@ -1,3 +1,4 @@
+import 'package:client/inGame/inGame.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/floatingButton.dart';
 
@@ -86,7 +87,10 @@ class _LobbyState extends State<Lobby> {
                             children: <Widget>[
                               TextButton(
                                 child: Text('참가하기'),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(context, 
+                                    MaterialPageRoute(builder: (BuildContext context) => InGame()));
+                                },
                               )
                             ]
                           ),
