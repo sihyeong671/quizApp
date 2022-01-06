@@ -1,18 +1,27 @@
 import express from 'express'
+import cors from 'cors'
+import mongoose from 'mongoose'
+require('dotenv').config()
+
+const {PORT} = process.env
 
 const app = express()
+app.use(cors())
+app.use(express.json()) //body-parser와 동일
 
-app.get('/', (req, res) => {
-  res.json([
-    {
-      id: 1,
-      name: 'K'
-    },
-    {
-      id: 2,
-      name: 'L'
-    }
-  ])
-})
+// DB
+// mongoose.connect(
+//   'mongodb://localhost/test',
+//   {
+//     useNewURLParser: true,
+//     useFindAndModify: false,
+//     useUnifiedTopolgy: true
+//   }
+// )
 
-app.listen(5000, (err) => console.log(err))
+
+// app.get('/', (req, res) => {
+//   res.send('Hello')
+// })
+
+app.listen(PORT, (err) => console.log(err))
