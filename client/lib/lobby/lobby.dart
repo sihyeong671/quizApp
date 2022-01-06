@@ -15,7 +15,16 @@ class _LobbyState extends State<Lobby> {
     '강준서 바보',
     '김기영 너무 멋져',
     '공병규 최고야',
-    '박도윤 어디갔어'
+    '박도윤 어디갔어',
+    '강준서 바보',
+    '강준서 바보',
+    '강준서 바보',
+    '강준서 바보',
+    '강준서 바보',
+    '강준서 바보',
+    '강준서 바보',
+    '강준서 바보',
+    '강준서 바보',
   ];
 
   final List<String> wons = <String>[
@@ -24,7 +33,16 @@ class _LobbyState extends State<Lobby> {
     "노래 맞추기",
     "인물퀴즈",
     "인물퀴즈",
-    "인물퀴즈"
+    "인물퀴즈",
+    "인물퀴즈",
+    "인물퀴즈",
+    "인물퀴즈",
+    "인물퀴즈",
+    "인물퀴즈",
+    "인물퀴즈",
+    "인물퀴즈",
+    "인물퀴즈",
+    "인물퀴즈",
   ];
   
   @override
@@ -32,34 +50,55 @@ class _LobbyState extends State<Lobby> {
     return Scaffold(
       // backgroundColor: Colors.amber,
       floatingActionButton: FloatingButton(),
-      body: ListView.separated(
-        itemCount: comments.length,
-        padding: EdgeInsets.all(8),
-        itemBuilder: (context, index) {
-          return Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: Text('${index+1}'),
-                  title: Text('${comments[index]}'),
-                  subtitle: Text('${wons[index]}'),
+      body: 
+        SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Padding(padding: EdgeInsets.only(top: 30.0)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ElevatedButton(
+                    child: Text('방만들기'),
+                    onPressed: () {},
+                  ),
+                  ElevatedButton(
+                    child: Text('빠른입장'),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              Container(
+                height: 1000,
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  children: List.generate(comments.length, (index) {
+                    return Card(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            leading: Text('${index+1}'),
+                            title: Text('${comments[index]}'),
+                            subtitle: Text('${wons[index]}'),
+                          ),
+                          ButtonBar(
+                            children: <Widget>[
+                              TextButton(
+                                child: Text('참가하기'),
+                                onPressed: () {},
+                              )
+                            ]
+                          ),
+                        ]
+                      )
+                    );
+                  }),
                 ),
-                ButtonBar(
-                  children: <Widget>[
-                    TextButton(
-                      child: Text('참가하기'),
-                      onPressed: () {},
-                    )
-                  ]
-                ),
-              ]
-            )
-          );
-        }, separatorBuilder: (BuildContext context, int index) {
-          return Divider();
-        },
+              ) 
+            ]
+          ),
         )
-      );
+    );
   }
 }
