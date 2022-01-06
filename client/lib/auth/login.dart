@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
 import 'package:client/auth/signUp.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -77,29 +78,34 @@ class _LogInState extends State<LogIn> {
                             ),
                             ButtonTheme(
                               minWidth: 100.0,
-                                height: 50.0,
-                                child: TextButton(
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                    size: 35.0,
-                                    ),
-                                    onPressed: (){
-                  
-                                      if(controller1.text == 'test' && controller2.text == '1234'){
-                                        Navigator.push(context, 
-                                          MaterialPageRoute(builder: (BuildContext context) => Lobby()));
-                                      } else{
-                                        showSnackBar(context);
-                                      }
-                  
-                                    },
-                                )
+                              height: 50.0,
+                              child: ElevatedButton(
+                                child: Text('LOGIN'),
+                                onPressed: (){
+              
+                                  if(controller1.text == 'test' && controller2.text == '1234'){
+                                    Navigator.push(context, 
+                                      MaterialPageRoute(builder: (BuildContext context) => Lobby()));
+                                  } else{
+                                    showSnackBar(context);
+                                  }
+              
+                                },
+                              )
                             ),
                             ButtonTheme(
                               minWidth: 100.0,
                                 height: 50.0,
                                 child: TextButton(
-                                    child: Text("회원가입"),
+                                    child: Image.asset('assets/kakao_login.png'),
+                                    onPressed: (){},
+                                )
+                            ),
+                            ButtonTheme(
+                              minWidth: 100.0,
+                                height: 50.0,
+                                child: ElevatedButton(
+                                    child: Text("SIGN UP"),
                                     onPressed: (){
 
                                       Navigator.push(context, 
@@ -107,7 +113,7 @@ class _LogInState extends State<LogIn> {
                                       
                                     },
                                 )
-                            )
+                            ),
                           ]
                         )
                       )

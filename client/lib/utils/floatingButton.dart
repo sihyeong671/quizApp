@@ -29,21 +29,18 @@ class FloatingButton extends StatelessWidget {
               backgroundColor: Colors.red,
               label: 'LOBBY',
               // labelStyle: TextTheme(fontSize: 18.0),
-              onTap: () => print('FIRST CHILD')
             ),
             SpeedDialChild(
               child: Icon(Icons.bar_chart),
               backgroundColor: Colors.blue,
               label: 'RANKING',
               // labelStyle: TextTheme(fontSize: 18.0),
-              onTap: () => print('SECOND CHILD'),
             ),
             SpeedDialChild(
               child: Icon(Icons.account_circle),
               backgroundColor: Colors.green,
               label: 'MY PAGE',
               // labelStyle: TextTheme(fontSize: 18.0),
-              onTap: () => print('THIRD CHILD'),
             ),
           ],
         );
