@@ -1,5 +1,6 @@
 import 'package:client/lobby/lobby.dart';
 import 'package:client/myPage/myPage.dart';
+import 'package:client/ranking/ranking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -39,7 +40,10 @@ class FloatingButton extends StatelessWidget {
               child: Icon(Icons.bar_chart),
               backgroundColor: Colors.blue,
               label: 'RANKING',
-              // labelStyle: TextTheme(fontSize: 18.0),
+              onTap: () {
+                Navigator.push(context, 
+                  MaterialPageRoute(builder: (BuildContext context) => Ranking()));
+              },
             ),
             SpeedDialChild(
               child: Icon(Icons.account_circle),

@@ -33,7 +33,7 @@ class _MyPageState extends State<MyPage> {
             SizedBox(
               height: 40.0
             ),
-            Text('Ranking : 55'),
+            Text('Ranking : 1'),
             SizedBox(
               height: 40.0
             ),
