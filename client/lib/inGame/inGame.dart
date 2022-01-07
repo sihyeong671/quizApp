@@ -1,3 +1,4 @@
+import 'package:client/inGame/Body.dart';
 import 'package:flutter/material.dart';
 
 class InGame extends StatefulWidget {
@@ -36,27 +37,114 @@ class _InGameState extends State<InGame> {
         body: 
           SingleChildScrollView(
             child: Column(
-              children: <Widget>[
-                Padding(padding: EdgeInsets.only(top: 30.0)),
-                Container(
-                  height: 1000,
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    children: List.generate(comments.length, (index) {
-                      return Card(
-                        
-                        child: Column(
+              children: [
+                Row(
+                  children: [
+                    Column(
+                      children: <Widget>[
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
                           children: <Widget>[
-                            ListTile(
-                              title: Text('${comments[index]}'),
+                            SizedBox(
+                              width: 10.0,
                             ),
-                          ]
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text('김기영'),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text('김기영'),
+                            
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text('김기영'),
+                          ],
                         )
-                      );
-                    }),
-                  ),
-                ) 
-              ]
+                      ],
+                    ),
+                    SizedBox(width: 193.0, height: 100.0),
+                    Column(
+                      children: <Widget>[
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            Text('김기영'),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            Text('김기영'),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            Text('김기영'),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+                
+                Body(),
+              ],
             ),
           )
       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
 import 'package:client/auth/signUp.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class LogIn extends StatefulWidget {
   @override
