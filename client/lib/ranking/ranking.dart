@@ -42,77 +42,82 @@ class _RankingState extends State<Ranking> {
             },
           );
     
-    return Scaffold(
-      floatingActionButton: FloatingButton(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 100.0)),
-            Image(
-              image: AssetImage('assets/crown.png'),
-              width: 70.0,
-              height: 70.0,
-            ),
-            Center(
-              child: CircleAvatar(
-                radius: 75.0,
-                backgroundColor: Colors.amberAccent[700],
+    return WillPopScope(
+      onWillPop: () {
+        return Future(() => false);
+      },
+      child: Scaffold(
+        floatingActionButton: FloatingButton(),
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Padding(padding: EdgeInsets.only(top: 100.0)),
+              Image(
+                image: AssetImage('assets/crown.png'),
+                width: 70.0,
+                height: 70.0,
+              ),
+              Center(
                 child: CircleAvatar(
-                    radius: 68.0,
-                    backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                  radius: 75.0,
+                  backgroundColor: Colors.amberAccent[700],
+                  child: CircleAvatar(
+                      radius: 68.0,
+                      backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-                height: 10.0
-            ),
-            Text('1등! 김기영'),
-            Text('180,265'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Padding(padding: EdgeInsets.only(left: 50.0)),
-                Column(
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 50.0,
-                      backgroundColor: Colors.grey[400],
-                      child: CircleAvatar(
-                          radius: 43.0,
-                          backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+              SizedBox(
+                  height: 10.0
+              ),
+              Text('1등! 김기영'),
+              Text('180,265'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Padding(padding: EdgeInsets.only(left: 50.0)),
+                  Column(
+                    children: <Widget>[
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundColor: Colors.grey[400],
+                        child: CircleAvatar(
+                            radius: 43.0,
+                            backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                        height: 10.0
+                      SizedBox(
+                          height: 10.0
+                        ),
+                      Text('2등! 김기영'),
+                      Text('90,865'),
+                    ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundColor: Colors.brown,
+                        child: CircleAvatar(
+                            radius: 43.0,
+                            backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                        ),
                       ),
-                    Text('2등! 김기영'),
-                    Text('90,865'),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 50.0,
-                      backgroundColor: Colors.brown,
-                      child: CircleAvatar(
-                          radius: 43.0,
-                          backgroundImage: AssetImage('assets/cutesexy.jpeg'),
-                      ),
-                    ),
-                    SizedBox(
-                        height: 10.0
-                      ),
-                    Text('3등! 김기영'),
-                    Text('55,155'),
-                  ],
-                ),
-              ],
-            ),
-            Container(
-              height: 250,
-              child: _listView,
-            ),
-          ]
+                      SizedBox(
+                          height: 10.0
+                        ),
+                      Text('3등! 김기영'),
+                      Text('55,155'),
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                height: 250,
+                child: _listView,
+              ),
+            ]
+          ),
         ),
       ),
     );

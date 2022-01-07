@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:client/utils/floatingButton.dart';
 
 class InGame extends StatefulWidget {
   const InGame({ Key? key }) : super(key: key);
@@ -20,33 +19,38 @@ class _InGameState extends State<InGame> {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: 
-        SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 30.0)),
-              Container(
-                height: 1000,
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  children: List.generate(comments.length, (index) {
-                    return Card(
-                      
-                      child: Column(
-                        children: <Widget>[
-                          ListTile(
-                            title: Text('${comments[index]}'),
-                          ),
-                        ]
-                      )
-                    );
-                  }),
-                ),
-              ) 
-            ]
-          ),
-        )
+    return WillPopScope(
+      onWillPop: () {
+        return Future(() => false);
+      },
+      child: Scaffold(
+        body: 
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(padding: EdgeInsets.only(top: 30.0)),
+                Container(
+                  height: 1000,
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    children: List.generate(comments.length, (index) {
+                      return Card(
+                        
+                        child: Column(
+                          children: <Widget>[
+                            ListTile(
+                              title: Text('${comments[index]}'),
+                            ),
+                          ]
+                        )
+                      );
+                    }),
+                  ),
+                ) 
+              ]
+            ),
+          )
+      ),
     );
   }
 }
