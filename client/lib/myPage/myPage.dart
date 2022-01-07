@@ -1,5 +1,9 @@
 import 'package:client/utils/floatingButton.dart';
+import 'package:client/myPage/settings.dart';
 import 'package:flutter/material.dart';
+
+
+
 
 class MyPage extends StatefulWidget {
   const MyPage({ Key? key }) : super(key: key);
@@ -19,6 +23,17 @@ class _MyPageState extends State<MyPage> {
           floatingActionButton: FloatingButton(),
           body: Column(
             children: <Widget>[
+              Container(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  onPressed: (){
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (BuildContext context) => Settings()));
+                    },
+                  icon: Icon(Icons.settings),
+                ),
+              ),
               Padding(padding: EdgeInsets.only(top: 120.0)),
               Center(
                 child: CircleAvatar(

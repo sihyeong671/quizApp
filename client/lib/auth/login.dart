@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
 import 'package:client/auth/signUp.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:kakao_flutter_sdk/all.dart';
+
 
 class LogIn extends StatefulWidget {
   @override
@@ -12,24 +18,35 @@ class _LogInState extends State<LogIn> {
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
 
+  var _postsJson = [];
+  
+  // final uri = "https://localhost:8080/user/all";
+  final uri = "http://10.0.2.2:8080/user/all";
+  
+  void fetchPosts() async {
+    try{
+      final response = await http.get(Uri.parse(uri));
+      // print(response);
+      final jsonData = jsonDecode(response.body);
+      // print(jsonData);
+      setState(() {
+        _postsJson = jsonData;
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print("작동");
+    fetchPosts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Log in'),
-      //   backgroundColor: Colors.redAccent,
-      //   centerTitle: true,
-      //   leading: IconButton(
-      //     icon: Icon(Icons.menu),
-      //     onPressed: (){}
-      //   ),
-      //   actions: <Widget>[
-      //     IconButton(
-      //       icon: Icon(Icons.search),
-      //       onPressed: (){}
-      //     )
-      //   ]
-      // ),
       body: Builder(
         builder: (context) {
           return GestureDetector(
@@ -97,8 +114,9 @@ class _LogInState extends State<LogIn> {
                                 height: 50.0,
                                 child: TextButton(
                                     child: Image.asset('assets/kakao_login.png'),
-                                    onPressed: (){
-                                      
+                                    onPressed:  () async {
+                                      String authCode = await AuthCodeClient.instance.request();
+                                      print(authCode);
                                     },
                                 )
                             ),
