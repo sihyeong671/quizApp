@@ -1,4 +1,6 @@
-import 'package:client/inGame/Body.dart';
+import 'package:client/inGame/ChatMessage.dart';
+import 'package:client/inGame/chat_input_field.dart';
+import 'package:client/inGame/message.dart';
 import 'package:flutter/material.dart';
 
 class InGame extends StatefulWidget {
@@ -35,118 +37,136 @@ class _InGameState extends State<InGame> {
             icon: Icon(Icons.arrow_back)),
         ),
         body: 
-          // SingleChildScrollView(
-          //   child: Column(
-          //     children: [
-                // Row(
-                //   children: [
-                //     Column(
-                //       children: <Widget>[
-                //         Padding(padding: EdgeInsets.only(top: 50.0)),
-                //         Row(
-                //           children: <Widget>[
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             CircleAvatar(
-                //               backgroundImage: AssetImage('assets/cutesexy.jpeg'),
-                //             ),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             Text('김기영'),
-                //           ],
-                //         ),
-                //         Padding(padding: EdgeInsets.only(top: 50.0)),
-                //         Row(
-                //           children: <Widget>[
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             CircleAvatar(
-                //               backgroundImage: AssetImage('assets/cutesexy.jpeg'),
-                //             ),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             Text('김기영'),
+          GestureDetector(
+            onTap: (){
+              FocusScope.of(context).unfocus();
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    Column(
+                      children: <Widget>[
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text('김기영'),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text('김기영'),
                             
-                //           ],
-                //         ),
-                //         Padding(padding: EdgeInsets.only(top: 50.0)),
-                //         Row(
-                //           children: <Widget>[
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             CircleAvatar(
-                //               backgroundImage: AssetImage('assets/cutesexy.jpeg'),
-                //             ),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             Text('김기영'),
-                //           ],
-                //         )
-                //       ],
-                //     ),
-                //     SizedBox(width: 193.0, height: 100.0),
-                //     Column(
-                //       children: <Widget>[
-                //         Padding(padding: EdgeInsets.only(top: 50.0)),
-                //         Row(
-                //           children: <Widget>[
-                //             Text('김기영'),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             CircleAvatar(
-                //               backgroundImage: AssetImage('assets/cutesexy.jpeg'),
-                //             ),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //           ],
-                //         ),
-                //         Padding(padding: EdgeInsets.only(top: 50.0)),
-                //         Row(
-                //           children: <Widget>[
-                //             Text('김기영'),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             CircleAvatar(
-                //               backgroundImage: AssetImage('assets/cutesexy.jpeg'),
-                //             ),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //           ],
-                //         ),
-                //         Padding(padding: EdgeInsets.only(top: 50.0)),
-                //         Row(
-                //           children: <Widget>[
-                //             Text('김기영'),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //             CircleAvatar(
-                //               backgroundImage: AssetImage('assets/cutesexy.jpeg'),
-                //             ),
-                //             SizedBox(
-                //               width: 10.0,
-                //             ),
-                //           ],
-                //         )
-                //       ],
-                //     ),
-                //   ],
-                // ),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text('김기영'),
+                          ],
+                        )
+                      ],
+                    ),
+                    Expanded(
+                      child: Image.asset(
+                        'assets/cutesexy.jpeg', 
+                        width: 150.0,
+                        height: 150.0,
+                      ),
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            Text('김기영'),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            Text('김기영'),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 50.0)),
+                        Row(
+                          children: <Widget>[
+                            Text('김기영'),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            CircleAvatar(
+                              backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
                 
-                Body(),
-              // ],
-          //   ),
-          // )
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: demeChatMessages.length,
+                    itemBuilder: (context, index) => 
+                      // Text("${index}"),
+                      Message(message: demeChatMessages[index]),
+                  ),
+                ),
+                ChatInputField()
+              ],
+            ),
+          )
       ),
     );
   }
