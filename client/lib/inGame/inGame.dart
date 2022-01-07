@@ -24,6 +24,15 @@ class _InGameState extends State<InGame> {
         return Future(() => false);
       },
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading:  IconButton(
+            onPressed: () {
+              Navigator.pop(context); //뒤로가기
+            },
+            color: Colors.black,
+            icon: Icon(Icons.arrow_back)),
+        ),
         body: 
           SingleChildScrollView(
             child: Column(
