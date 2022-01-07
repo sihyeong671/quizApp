@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
     //     data: Buffer,
     //     contentType: String
     // },
+    score:{
+        type: Number,
+        default: 0
+    },
     createdDay: {
         type: Date,
         default: Date.now

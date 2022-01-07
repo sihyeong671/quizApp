@@ -3,7 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import Server from 'socket.io'
 import http from 'http'
-import userRouter from './router/users.js' // .js붙여줘야함 (폴더안에 index.js 있으면 js쓸 필요없음)
+import userRouter from './router/api/users.js' // .js붙여줘야함 (폴더안에 index.js 있으면 js쓸 필요없음)
 
 dotenv.config()
 const {PORT} = process.env
@@ -13,44 +13,45 @@ const app = express()
 app.use(cors())
 app.use(express.json()) //body-parser와 동일
 
-app.use("/user",userRouter)
+app.use("/users",userRouter)
+
 
 
 
 const httpServer = http.createServer(app)
 const io = new Server(httpServer,{cors: {origin: '*'}})
 
-// DB
-
-
 io.on('connection', (socket) => {
-  console.log('socket connect', socket.id)
+  console.log('socket connect...')
 
-  // socket.on('typing', (data) => {
-  //   console.log(data);
-  //   io.emit('typing', data)
-  // })
+  socket.on("make-room", (roomName) => {
 
-  // socket.on('message', (data) => {
-  //   console.log(data);
-  //   io.emit('message', data)
-  // })
+  })
 
-  // socket.on('location', (data) => {
-  //   console.log(data);
-  //   io.emit('location', data)
-  // })
+  socket.on("quick-entry", () => {
 
-  // socket.on('connect', () => {})
+  })
 
-  // socket.on('disconnect', () => {
-  //   console.log('socket disconnect...', socket.id);
-  // })
+  socket.on("join-room", () => {
 
-  // socket.on('error', (err)=>{
-  //   console.log('received error from socket: ', socket.id)
-  //   console.log(err)
-  // })
+  })
+
+  socket.on("ready", () => {
+
+  })
+
+  socket.on('game-start', () => {
+
+  })
+
+  socket.on('send-message', () => {
+
+  })
+
+  socket.on("push-button", (param) => {
+    console.log(param);
+  })
+
 })
 
 
