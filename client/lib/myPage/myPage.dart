@@ -19,6 +19,13 @@ class _MyPageState extends State<MyPage> {
           floatingActionButton: FloatingButton(),
           body: Column(
             children: <Widget>[
+              Container(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  onPressed: (){},
+                  icon: Icon(Icons.settings),
+                ),
+              ),
               Padding(padding: EdgeInsets.only(top: 120.0)),
               Center(
                 child: CircleAvatar(
