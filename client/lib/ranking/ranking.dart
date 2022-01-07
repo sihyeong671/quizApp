@@ -10,13 +10,23 @@ class Ranking extends StatefulWidget {
 
 class _RankingState extends State<Ranking> {
   final List<String> users = <String>[
-    '4등 강준서 - 10',
-    '5등 강준서 - 9',
-    '6등 강준서 - 8',
-    '7등 강준서 - 7',
-    '8등 강준서 - 6',
-    '9등 강준서 - 5',
-    '10등 강준서 - 4',
+    '김기영',
+    '김기영',
+    '김기영',
+    '김기영',
+    '김기영',
+    '김기영',
+    '김기영',
+  ]; 
+
+  final List<String> scores = <String>[
+    '48,684',
+    '47,122',
+    '15,486',
+    '9,156',
+    '5,612',
+    '176',
+    '65',
   ]; 
   
   @override
@@ -30,9 +40,20 @@ class _RankingState extends State<Ranking> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ListTile(
-                      leading: Text('${index+1}'),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text('${index+4}' + '등'),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          CircleAvatar(
+                            backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                          )
+                        ],
+                      ),
                       title: Text('${users[index]}'),
-                      subtitle: Text('${users[index]}'),
+                      subtitle: Text('${scores[index]}'),
                     ),
                   ]
                 )
@@ -51,7 +72,7 @@ class _RankingState extends State<Ranking> {
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 100.0)),
+              Padding(padding: EdgeInsets.only(top: 50.0)),
               Image(
                 image: AssetImage('assets/crown.png'),
                 width: 70.0,
@@ -113,7 +134,7 @@ class _RankingState extends State<Ranking> {
                 ],
               ),
               Container(
-                height: 250,
+                height: 300,
                 child: _listView,
               ),
             ]
