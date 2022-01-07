@@ -1,26 +1,27 @@
 import express from 'express'
 import cors from 'cors'
-import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import User from './model/user.js'
 import Server from 'socket.io'
 import http from 'http'
+import userRouter from './router/users.js' // .js붙여줘야함 (폴더안에 index.js 있으면 js쓸 필요없음)
 
 dotenv.config()
 const {PORT} = process.env
 
 const app = express()
+
 app.use(cors())
 app.use(express.json()) //body-parser와 동일
 
-const httpServer = http.createServer(app)
+app.use("/user",userRouter)
 
+
+
+const httpServer = http.createServer(app)
 const io = new Server(httpServer,{cors: {origin: '*'}})
 
 // DB
-mongoose.connect('mongodb://localhost:27017/test')
-  .then(()=>console.log("Connected to MongoDB"))
-  .catch((err)=> console.log(err))
+
 
 io.on('connection', (socket) => {
   console.log('socket connect', socket.id)

@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 // const mongoose = require('mongoose');
 import validator from "express-validator";
 
+mongoose.connect('mongodb://localhost:27017/test')
+  .then(()=>console.log("Connected to MongoDB"))
+  .catch((err)=> console.log(err))
+
 const UserSchema = new mongoose.Schema({
     nickName:{
         type: String,
@@ -18,9 +22,9 @@ const UserSchema = new mongoose.Schema({
     }
 })
 
-const User = mongoose.model("User", UserSchema)
+const Users = mongoose.model("User", UserSchema)
 
 // module.exports = User;
 
-export default User;
+export default Users;
 

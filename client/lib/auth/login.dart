@@ -5,8 +5,7 @@ import 'package:client/lobby/lobby.dart';
 import 'package:client/auth/signUp.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-
-
+import 'package:kakao_flutter_sdk/all.dart';
 
 
 class LogIn extends StatefulWidget {
@@ -21,22 +20,27 @@ class _LogInState extends State<LogIn> {
 
   var _postsJson = [];
   
-  final uri = "https://jsonplaceholder.typicode.com/posts";
+  // final uri = "https://localhost:8080/user/all";
+  final uri = "http://10.0.2.2:8080/user/all";
   
   void fetchPosts() async {
     try{
       final response = await http.get(Uri.parse(uri));
-      final jsonData = jsonDecode(response.body) as List;
-
+      // print(response);
+      final jsonData = jsonDecode(response.body);
+      // print(jsonData);
       setState(() {
         _postsJson = jsonData;
       });
-    } catch (err) {}
+    } catch (err) {
+      print(err);
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    print("작동");
     fetchPosts();
   }
 
@@ -110,10 +114,9 @@ class _LogInState extends State<LogIn> {
                                 height: 50.0,
                                 child: TextButton(
                                     child: Image.asset('assets/kakao_login.png'),
-                                    onPressed: (){
-                                      final post = _postsJson[0];
-                                      Fluttertoast.showToast(msg: '${post["title"]}',
-                                      );
+                                    onPressed:  () async {
+                                      String authCode = await AuthCodeClient.instance.request();
+                                      print(authCode);
                                     },
                                 )
                             ),
