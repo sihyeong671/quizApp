@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
 import 'package:client/auth/signUp.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+
+
+
 
 class LogIn extends StatefulWidget {
   @override
@@ -12,24 +19,30 @@ class _LogInState extends State<LogIn> {
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
 
+  var _postsJson = [];
+  
+  final uri = "https://jsonplaceholder.typicode.com/posts";
+  
+  void fetchPosts() async {
+    try{
+      final response = await http.get(Uri.parse(uri));
+      final jsonData = jsonDecode(response.body) as List;
+
+      setState(() {
+        _postsJson = jsonData;
+      });
+    } catch (err) {}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPosts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Log in'),
-      //   backgroundColor: Colors.redAccent,
-      //   centerTitle: true,
-      //   leading: IconButton(
-      //     icon: Icon(Icons.menu),
-      //     onPressed: (){}
-      //   ),
-      //   actions: <Widget>[
-      //     IconButton(
-      //       icon: Icon(Icons.search),
-      //       onPressed: (){}
-      //     )
-      //   ]
-      // ),
       body: Builder(
         builder: (context) {
           return GestureDetector(
@@ -97,7 +110,11 @@ class _LogInState extends State<LogIn> {
                                 height: 50.0,
                                 child: TextButton(
                                     child: Image.asset('assets/kakao_login.png'),
-                                    onPressed: (){},
+                                    onPressed: (){
+                                      final post = _postsJson[0];
+                                      Fluttertoast.showToast(msg: '${post["title"]}',
+                                      );
+                                    },
                                 )
                             ),
                             ButtonTheme(

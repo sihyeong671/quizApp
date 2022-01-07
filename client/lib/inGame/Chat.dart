@@ -35,7 +35,7 @@ List chatsData = [
   ),
   Chat(
     name: "Jacob Jones",
-    lastMessage: "You’re welcome :)",
+    lastMessage: "You’re welcome :",
     image: "assets/images/user_4.png",
     time: "5d ago",
     isActive: true,
