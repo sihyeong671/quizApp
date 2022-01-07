@@ -18,9 +18,9 @@ const httpServer = http.createServer(app)
 const io = new Server(httpServer,{cors: {origin: '*'}})
 
 // DB
-// mongoose.connect('mongodb://localhost:27017/test')
-//   .then(()=>console.log("Connected to MongoDB"))
-//   .catch((err)=> console.log(err))
+mongoose.connect('mongodb://localhost:27017/test')
+  .then(()=>console.log("Connected to MongoDB"))
+  .catch((err)=> console.log(err))
 
 io.on('connection', (socket) => {
   console.log('socket connect', socket.id)
