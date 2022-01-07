@@ -1,6 +1,9 @@
 import 'package:client/utils/floatingButton.dart';
 import 'package:client/myPage/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'dart:convert';
 
 
 
@@ -13,6 +16,30 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  
+  var _name = "guest";
+  var _image = "https://source.unsplash.com/random/200x200?sig=1";
+  
+  void fetchProfile() async {
+    try{
+      final res = await http.get(Uri.parse('http://10.0.2.2:8080/user/all'));
+      final jsonData = jsonDecode(res.body);
+      print(jsonData);
+      setState(() {
+        _name = jsonData[0]['nickName'];
+        _image = jsonData[0]['img'];
+
+      });
+    } catch(err){
+      print(err);
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    fetchProfile();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -38,13 +65,14 @@ class _MyPageState extends State<MyPage> {
               Center(
                 child: CircleAvatar(
                   radius: 70.0,
-                  backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                  // backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                  backgroundImage: NetworkImage(_image),
                 )
               ),
               SizedBox(
                 height: 40.0
               ),
-              Text('Nickname : CUTIE SEXY'),
+              Text('Nickname : ${_name}'),
               SizedBox(
                 height: 40.0
               ),

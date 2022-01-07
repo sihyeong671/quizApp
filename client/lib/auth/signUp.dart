@@ -85,7 +85,7 @@ class _SignUpState extends State<SignUp> {
                                     child: Text("회원가입고고"),
                                     onPressed: (){
 
-                                      Navigator.push(context, 
+                                      Navigator.pushReplacement(context, 
                                         MaterialPageRoute(builder: (BuildContext context) => LogIn()));
                                       
                                     },

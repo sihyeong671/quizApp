@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-// const mongoose = require('mongoose');
 import validator from "express-validator";
+
 
 mongoose.connect('mongodb://localhost:27017/test')
   .then(()=>console.log("Connected to MongoDB"))
@@ -9,13 +9,11 @@ mongoose.connect('mongodb://localhost:27017/test')
 const UserSchema = new mongoose.Schema({
     nickName:{
         type: String,
-        trim: true,
-        unique: true
+        trim: true
     },
-    // img:{
-    //     data: Buffer,
-    //     contentType: String
-    // },
+    img:{
+        type: String,
+    },
     createdDay: {
         type: Date,
         default: Date.now

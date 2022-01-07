@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:client/myPage/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
 import 'package:client/auth/signUp.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/all.dart';
 
@@ -41,8 +42,24 @@ class _LogInState extends State<LogIn> {
   void initState() {
     super.initState();
     print("작동");
-    fetchPosts();
+    // fetchPosts();
   }
+
+  // Future<void> _issueAccessToken(String authCode) async {
+  //   try {
+  //     var token = await AuthApi.instance.issueAccessToken(authCode);
+  //     AccessTokenStore.instance.toStore(token);
+  //     final kakaoUrl = Uri.parse('[http://10.0.2.2:8080/api/kakao]');
+  //     http
+  //         .post(kakaoUrl, body: json.encode({'access_token': token}))
+  //         .then((res) => print(json.decode(res.body)))
+  //         .catchError((e) => print(e.toString()));
+  //     Navigator.pushNamed(context, '/');
+  //   } catch (error) {
+  //     print(error.toString());
+  //   }
+  // }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -115,8 +132,28 @@ class _LogInState extends State<LogIn> {
                                 child: TextButton(
                                     child: Image.asset('assets/kakao_login.png'),
                                     onPressed:  () async {
-                                      String authCode = await AuthCodeClient.instance.request();
-                                      print(authCode);
+                                      // String authCode = await AuthCodeClient.instance.requestWithTalk();
+                                      // await _issueAccessToken(code);
+                                      // } catch (error) {
+                                      //   print(error.toString());
+                                      // }
+                                      // print('카카오 연결 성공!'+ authCode);
+                                      try {
+                                        final token = await UserApi.instance.loginWithKakaoTalk();
+                                        print('res이에요'+token.toString());
+                                        User kakaoUser = await UserApi.instance.me();
+                                        var name = kakaoUser.properties!['nickname'].toString();
+                                        var image = kakaoUser.properties!['thumbnail_image'].toString();
+
+                                        
+                                        var res = await http.post(Uri.parse('http://10.0.2.2:8080/user/save'),
+                                          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                          body: {"nickName": name, "img": image});
+                                        Navigator.push(context, 
+                                          MaterialPageRoute(builder: (BuildContext context) => MyPage()));
+                                      } catch (e) {
+                                        print('error on login: $e');
+  }
                                     },
                                 )
                             ),
@@ -125,11 +162,9 @@ class _LogInState extends State<LogIn> {
                                 height: 50.0,
                                 child: ElevatedButton(
                                     child: Text("SIGN UP"),
-                                    onPressed: (){
-
-                                      Navigator.push(context, 
+                                    onPressed: () {
+                                      Navigator.pushReplacement(context, 
                                         MaterialPageRoute(builder: (BuildContext context) => SignUp()));
-                                      
                                     },
                                 )
                             ),
@@ -146,6 +181,7 @@ class _LogInState extends State<LogIn> {
       )
     );
   }
+
 }
 
 void showSnackBar(BuildContext context){

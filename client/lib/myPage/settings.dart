@@ -5,14 +5,17 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Text("소리"),
-          Text("진동"),
-          Text("로그아웃"),
-          Text("푸쉬알림")
-        ],
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            Padding(padding: EdgeInsets.only(top: 50.0)),
+            Text("소리"),
+            Text("진동"),
+            Text("로그아웃"),
+            Text("푸쉬알림")
+          ],
+        ),
       ),
     );
   }
