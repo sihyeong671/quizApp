@@ -1,5 +1,9 @@
 import 'package:client/utils/floatingButton.dart';
+import 'package:client/myPage/settings.dart';
 import 'package:flutter/material.dart';
+
+
+
 
 class MyPage extends StatefulWidget {
   const MyPage({ Key? key }) : super(key: key);
@@ -22,7 +26,11 @@ class _MyPageState extends State<MyPage> {
               Container(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (BuildContext context) => Settings()));
+                    },
                   icon: Icon(Icons.settings),
                 ),
               ),
