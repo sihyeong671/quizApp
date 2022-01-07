@@ -35,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   TextEditingController msgInputController = TextEditingController();
   late IO.Socket socket;
-
+  
   @override
   void initState() {
     // TODO: implement initState
