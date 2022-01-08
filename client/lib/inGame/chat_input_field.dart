@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+class ChatInputField extends StatefulWidget {
+  const ChatInputField({ Key? key }) : super(key: key);
 
-class ChatInputField extends StatelessWidget {
-  const ChatInputField({
-    Key? key,
-  }) : super(key: key);
+  @override
+  _ChatInputFieldState createState() => _ChatInputFieldState();
+}
+
+class _ChatInputFieldState extends State<ChatInputField> {
+
+  TextEditingController _msgController = TextEditingController();
+  late final IO.Socket socket;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    socket = IO.io('http://10.0.2.2:8080',
+    IO.OptionBuilder()
+      .setTransports(['websocket'])
+      .disableAutoConnect()
+      .build());
+    socket.connect();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +46,6 @@ class ChatInputField extends StatelessWidget {
       child: SafeArea(
         child: Row(
           children: [
-            Icon(Icons.mic, color: Colors.black),
             SizedBox(width: 20.0),
             Expanded(
               child: Container(
@@ -39,39 +58,27 @@ class ChatInputField extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.sentiment_satisfied_alt_outlined,
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .color!
-                          .withOpacity(0.64),
-                    ),
                     SizedBox(width: 20.0 / 4),
                     Expanded(
                       child: TextField(
+                        controller: _msgController,
                         decoration: InputDecoration(
-                          hintText: "Type message",
+                          hintText: "정답",
                           border: InputBorder.none,
                         ),
                       ),
                     ),
-                    Icon(
-                      Icons.attach_file,
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .color!
-                          .withOpacity(0.64),
-                    ),
                     SizedBox(width: 20.0 / 4),
-                    Icon(
-                      Icons.camera_alt_outlined,
+                    IconButton(
+                      onPressed: (){
+                        socket.emit("send-message", _msgController.text);
+                      },
+                      icon: Icon(Icons.send_rounded),
                       color: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .color!
-                          .withOpacity(0.64),
+                        .textTheme
+                        .bodyText1!
+                        .color!
+                        .withOpacity(0.64),
                     ),
                   ],
                 ),

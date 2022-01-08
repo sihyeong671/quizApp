@@ -1,6 +1,10 @@
 import 'package:client/inGame/inGame.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/floatingButton.dart';
+import 'package:client/utils/socketManager.dart';
+import 'package:client/models/Room.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Lobby extends StatefulWidget {
   const Lobby({ Key? key }) : super(key: key);
@@ -10,42 +14,48 @@ class Lobby extends StatefulWidget {
 }
 
 class _LobbyState extends State<Lobby> {
-  final List<String> comments = <String>[
-    '시형아 게임하자',
-    '정희종 나와',
-    '강준서 바보',
-    '김기영 너무 멋져',
-    '공병규 최고야',
-    '박도윤 어디갔어',
-    '강준서 바보',
-    '강준서 바보',
-    '강준서 바보',
-    '강준서 바보',
-    '강준서 바보',
-    '강준서 바보',
-    '강준서 바보',
-    '강준서 바보',
-    '강준서 바보',
-  ];
-
-  final List<String> wons = <String>[
-    "인물퀴즈",
-    "영화 맞추기",
-    "노래 맞추기",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-    "인물퀴즈",
-  ];
   
+  Room Room1 = new Room(6, 3, '노래', '게임하자', false, ['test1', 'test2', 'test3']);
+  Room Room2 = new Room(6, 1, '음악', '게임ㄱㄱ', false, ['1번']);
+
+  final List<Room> rooms = [];
+
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+    if(mounted)
+    setState(() {
+
+    });
+    _refreshController.loadComplete();
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    connectSocket();
+    rooms.addAll({Room1, Room2});
+    _initSocketListener();
+    
+  }
+
+  _initSocketListener(){
+    roomExistenceCheck(_showToastMessage);
+    updateRoomInfo(_updateInfo);
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -65,43 +75,58 @@ class _LobbyState extends State<Lobby> {
                   children: <Widget>[
                     ElevatedButton(
                       child: Text('방만들기'),
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => roomModal()
+                        );
+                      },
                     ),
                     ElevatedButton(
                       child: Text('빠른입장'),
-                      onPressed: () {},
+                      onPressed: () {
+                        quickEntry();
+                      },
                     ),
                   ],
                 ),
                 Container(
                   height: 1000,
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    children: List.generate(comments.length, (index) {
-                      return Card(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            ListTile(
-                              leading: Text('${index+1}'),
-                              title: Text('${comments[index]}'),
-                              subtitle: Text('${wons[index]}'),
-                            ),
-                            ButtonBar(
-                              children: <Widget>[
-                                TextButton(
-                                  child: Text('참가하기'),
-                                  onPressed: () {
-                                    Navigator.push(context, 
-                                      MaterialPageRoute(builder: (BuildContext context) => InGame()));
-                                  },
-                                )
-                              ]
-                            ),
-                          ]
-                        )
-                      );
-                    }),
+                  child: SmartRefresher(
+                    enablePullDown: true,
+                    // enablePullUp: true,
+                    header: WaterDropHeader(),
+                    controller: _refreshController,
+                    onRefresh: _onRefresh,
+                    // onLoading: _onLoading,
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      children: List.generate(rooms.length, (index) {
+                        return Card(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                leading: Text('${index+1}'),
+                                title: Text('${rooms[index].gameTitle}'),
+                                subtitle: Text('${rooms[index].gameType}'),
+                              ),
+                              ButtonBar(
+                                children: <Widget>[
+                                  TextButton(
+                                    child: Text('참가하기'),
+                                    onPressed: () {
+                                      Navigator.push(context, 
+                                        MaterialPageRoute(builder: (BuildContext context) => InGame()));
+                                    },
+                                  )
+                                ]
+                              ),
+                            ]
+                          )
+                        );
+                      }),
+                    ),
                   ),
                 ) 
               ]
@@ -110,4 +135,155 @@ class _LobbyState extends State<Lobby> {
       ),
     );
   }
+
+  _showToastMessage(data){
+    Fluttertoast.showToast(
+      msg: data,
+      toastLength: Toast.LENGTH_SHORT,
+      fontSize: 16,
+      textColor: Colors.black,
+      gravity: ToastGravity.CENTER
+    );
+  }
+
+
+  _updateInfo(data){
+    late int totalNum;
+    late int currentNum;
+    late String gameType;
+    late String gameTitle;
+    late bool isLock;
+    List<String> person = [];
+
+    data.forEach((name, value){
+      if(name == 'totalNum') totalNum = value;
+      else if(name == 'currentNum') currentNum = value;
+      else if(name == 'gameType') gameType = value;
+      else if(name == 'gameTitle') gameTitle = value;
+      else if(name == 'isLock') isLock = value;
+      else if(name == 'person'){
+        value.forEach((v){
+          person.add(v);
+        });
+      }
+    });
+    
+
+    print(totalNum);
+    print(currentNum);
+    print(gameType);
+    print(gameTitle);
+    print(isLock);
+    print(person);
+
+    Room newRoom = new Room(
+      totalNum,
+      currentNum,
+      gameType,
+      gameTitle,
+      isLock,
+      person
+    );
+    print(newRoom);
+    
+
+    setState(() {
+      rooms.add(newRoom);
+    });
+  }
 }
+
+class roomModal extends StatefulWidget {
+  const roomModal({ Key? key }) : super(key: key);
+
+  @override
+  _roomModalState createState() => _roomModalState();
+}
+
+class _roomModalState extends State<roomModal> {
+
+  TextEditingController _roomNameController = TextEditingController();
+  TextEditingController _pwController = TextEditingController();
+
+  bool _lock = true;
+  String? dropdownValue = '노래';
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("방 이름을 입력해주세요"),
+      elevation: 24.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0)
+      ),
+      content: Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _roomNameController,
+                decoration: InputDecoration(
+                  hintText: "나랑 게임하자"
+                ),
+              ),
+              DropdownButton(
+                value:dropdownValue,
+                icon: Icon(Icons.add),
+                items: <String>['인물', '영화', '노래'].map
+                  <DropdownMenuItem<String>>((String value){
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value)
+                    );
+                  }).toList(),
+              
+                onChanged: (String? newValue){
+                  setState(() {
+                    dropdownValue = newValue;
+                  });
+                }),
+              Container(
+                child: Row(
+                  children: [
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child:TextField(
+                        controller: _pwController,
+                        decoration: InputDecoration(
+                          hintText: "비밀번호"
+                        ),
+                      )
+                    ),
+                    IconButton(
+                      onPressed: (){
+                        setState(() {
+                          _lock = !_lock;
+                        });
+                      },
+                      icon: _lock ? Icon(Icons.lock_open_sharp) : Icon(Icons.lock_sharp)
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      actions: [
+        ElevatedButton(
+          onPressed: (){
+            Navigator.pop(context);
+            makeRoom(_roomNameController.text, dropdownValue, _lock);
+          },
+          child: Text('방 만들기')),
+        ElevatedButton(
+          onPressed: (){
+            Navigator.pop(context);
+            print("취소");
+          },
+          child: Text("취소")
+        )
+      ],
+    );
+  }
+}
+

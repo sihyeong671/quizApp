@@ -23,12 +23,6 @@ class _LogInState extends State<LogIn> {
   @override
   void initState(){
     super.initState();
-    socket = IO.io('http://10.0.2.2:8080',
-    IO.OptionBuilder()
-      .setTransports(['websocket'])
-      .disableAutoConnect()
-      .build());
-    socket.connect();
   }
 
   @override
