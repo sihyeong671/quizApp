@@ -14,6 +14,10 @@ const UserSchema = new mongoose.Schema({
     img:{
         type: String,
     },
+    score:{
+        type: Number,
+        default: 0
+    },
     createdDay: {
         type: Date,
         default: Date.now
