@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:client/main.dart';
 import 'package:client/myPage/myPage.dart';
+import 'package:client/provider/userID.dart';
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
 import 'package:client/auth/signUp.dart';
@@ -18,48 +20,8 @@ class _LogInState extends State<LogIn> {
   
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
+  final provider = getIt.get<UserID>();
 
-  var _postsJson = [];
-  
-  // final uri = "https://localhost:8080/user/all";
-  final uri = "http://10.0.2.2:8080/user/all";
-  
-  void fetchPosts() async {
-    try{
-      final response = await http.get(Uri.parse(uri));
-      // print(response);
-      final jsonData = jsonDecode(response.body);
-      // print(jsonData);
-      setState(() {
-        _postsJson = jsonData;
-      });
-    } catch (err) {
-      print(err);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    print("작동");
-    // fetchPosts();
-  }
-
-  // Future<void> _issueAccessToken(String authCode) async {
-  //   try {
-  //     var token = await AuthApi.instance.issueAccessToken(authCode);
-  //     AccessTokenStore.instance.toStore(token);
-  //     final kakaoUrl = Uri.parse('[http://10.0.2.2:8080/api/kakao]');
-  //     http
-  //         .post(kakaoUrl, body: json.encode({'access_token': token}))
-  //         .then((res) => print(json.decode(res.body)))
-  //         .catchError((e) => print(e.toString()));
-  //     Navigator.pushNamed(context, '/');
-  //   } catch (error) {
-  //     print(error.toString());
-  //   }
-  // }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -132,12 +94,6 @@ class _LogInState extends State<LogIn> {
                                 child: TextButton(
                                     child: Image.asset('assets/kakao_login.png'),
                                     onPressed:  () async {
-                                      // String authCode = await AuthCodeClient.instance.requestWithTalk();
-                                      // await _issueAccessToken(code);
-                                      // } catch (error) {
-                                      //   print(error.toString());
-                                      // }
-                                      // print('카카오 연결 성공!'+ authCode);
                                       try {
                                         final token = await UserApi.instance.loginWithKakaoTalk();
                                         print('res이에요'+token.toString());
@@ -149,6 +105,7 @@ class _LogInState extends State<LogIn> {
                                         var res = await http.post(Uri.parse('http://10.0.2.2:8080/user/save'),
                                           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                                           body: {"nickName": name, "img": image});
+                                        provider.add(jsonDecode(res.body)['_id']);
                                         Navigator.push(context, 
                                           MaterialPageRoute(builder: (BuildContext context) => MyPage()));
                                       } catch (e) {

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class UserID with ChangeNotifier {
-  @JsonKey(name: "_id")
-  final String id;
+  String _id = "";
+  String get myID => _id;
 
-  void add() {
-    _cout++;
+  void add(id) {
+    _id = id;
     notifyListeners();
   }
 
   void remove() {
-    _count--;
+    _id = "";
     notifyListeners();
   }
 }

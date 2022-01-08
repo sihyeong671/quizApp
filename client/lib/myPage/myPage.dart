@@ -1,9 +1,13 @@
+import 'package:client/main.dart';
+import 'package:client/provider/userID.dart';
 import 'package:client/utils/floatingButton.dart';
 import 'package:client/myPage/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
+
+import 'package:provider/provider.dart';
 
 
 
@@ -16,15 +20,14 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  
   var _name = "guest";
   var _image = "https://source.unsplash.com/random/200x200?sig=1";
+  final provider = getIt.get<UserID>();
   
   void fetchProfile() async {
     try{
-      final res = await http.get(Uri.parse('http://10.0.2.2:8080/user/all'));
+      final res = await http.get(Uri.parse('http://10.0.2.2:8080/user/${provider.myID}'));
       final jsonData = jsonDecode(res.body);
-      print(jsonData);
       setState(() {
         _name = jsonData[0]['nickName'];
         _image = jsonData[0]['img'];

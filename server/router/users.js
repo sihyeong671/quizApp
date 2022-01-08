@@ -6,9 +6,9 @@ import db from '../db.js'
 
 const userRouter = express.Router()
 
-userRouter.get('/all', async (req, res) =>  {
+userRouter.get('/:id', async (req, res) =>  {
     console.log("유저정보요청")
-    let userData = await Users.find({nickName: "기영이"})
+    let userData = await Users.find({_id: req.params.id})
     res.json(userData);
 })
 
