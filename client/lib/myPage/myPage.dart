@@ -23,16 +23,16 @@ class _MyPageState extends State<MyPage> {
   var _name = "guest";
   var _image = "https://source.unsplash.com/random/200x200?sig=1";
   var _score = -1;
+  var _isGuest = true;
   final provider = getIt.get<UserID>();
   
   void fetchProfile() async {
     try{
-      final res = await http.get(Uri.parse('http://10.0.2.2:8080/user/${provider.myID}'));
-      final jsonData = jsonDecode(res.body);
       setState(() {
-        _name = jsonData[0]['nickName'];
-        _image = jsonData[0]['img'];
-        _score = jsonData[0]['score'];
+        _name = provider.myName;
+        _image = provider.myImage;
+        _score = provider.myScore;
+        _isGuest = provider.myIsGuest;
       });
     } catch(err){
       print(err);
@@ -80,6 +80,7 @@ class _MyPageState extends State<MyPage> {
               SizedBox(
                 height: 40.0
               ),
+              if(!_isGuest)...[
               Text('Score : ${_score}'),
               SizedBox(
                 height: 40.0
@@ -93,9 +94,7 @@ class _MyPageState extends State<MyPage> {
                 height: 40.0
               ),
               Text('Max Ranking : -'),
-              SizedBox(
-                height: 40.0
-              ),
+              ]
             ],
           ),
         ),

@@ -73,9 +73,15 @@ class _LogInState extends State<LogIn> {
                               height: 50.0,
                               child: ElevatedButton(
                                 child: Text('게스트 로그인'),
-                                onPressed: (){
+                                onPressed: () async {
+                                    final response = await http.get(Uri.parse("https://nickname.hwanmoo.kr/?format=json&count=1"));
+                                    final jsonData = jsonDecode(response.body);
+                                    var name = jsonData['words'][0];
+                                    var url = "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80";
+                                    
+                                    provider.add("0", name, url, 0, true);
                                     Navigator.push(context, 
-                                      MaterialPageRoute(builder: (BuildContext context) => Lobby()));
+                                      MaterialPageRoute(builder: (BuildContext context) => MyPage()));
                                 },
                               )
                             ),
@@ -94,16 +100,23 @@ class _LogInState extends State<LogIn> {
                                         User kakaoUser = await UserApi.instance.me();
                                         var userID = kakaoUser.id.toString();
                                         var name = kakaoUser.properties!['nickname'].toString();
-                                        var image = kakaoUser.properties!['thumbnail_image'].toString();
+                                        var image = kakaoUser.properties!['thumbnail_image'];
+                                        // var res;
 
-                                        provider.add(userID, name);
                                         try{
                                           final res = await http.get(Uri.parse('http://10.0.2.2:8080/user/${userID}'));
+                                          final jsonData = jsonDecode(res.body);
+                                          provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
                                         } catch(e){
-                                          await http.post(Uri.parse('http://10.0.2.2:8080/user/save'),
-                                          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                                          body: {"userID": userID, "nickName": name, "img": image});
+                                          final res = await http.post(Uri.parse('http://10.0.2.2:8080/user/save'),
+                                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                            body: {"userID": userID, "nickName": name, "img": image});
+                                          final jsonData = jsonDecode(res.body);
+                                          provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
                                         }
+                                        
+
+                                        
                                         
                                         Navigator.push(context, 
                                           MaterialPageRoute(builder: (BuildContext context) => MyPage()));
