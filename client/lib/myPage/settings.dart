@@ -74,7 +74,6 @@ class Settings extends StatelessWidget {
             TextButton(
               onPressed: () {
                 FlutterDialog();
-                
               },
               child: 
                 Text('탈퇴하기')),

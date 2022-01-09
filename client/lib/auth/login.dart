@@ -86,7 +86,7 @@ class _LogInState extends State<LogIn> {
                                       
                                       provider.add("0", name, url, 0, true);
                                       Navigator.push(context, 
-                                        MaterialPageRoute(builder: (BuildContext context) => MyPage()));
+                                        MaterialPageRoute(builder: (BuildContext context) => Lobby()));
                                   },
                                 )
                               ),
@@ -124,7 +124,7 @@ class _LogInState extends State<LogIn> {
                                           
                                           
                                           Navigator.push(context, 
-                                            MaterialPageRoute(builder: (BuildContext context) => MyPage()));
+                                            MaterialPageRoute(builder: (BuildContext context) => Lobby()));
                                         } catch (e) {
                                           print('error on login: $e');
                                         }
