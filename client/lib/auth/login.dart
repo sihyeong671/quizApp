@@ -22,6 +22,21 @@ class _LogInState extends State<LogIn> {
   TextEditingController controller2 = TextEditingController();
   final provider = getIt.get<UserID>();
 
+  bool _isKaKaoTalkInstalled = true;
+
+  _initKaKaoTalkInstalled() async {
+    final installed = await isKakaoTalkInstalled();
+    setState(() {
+      _isKaKaoTalkInstalled = installed;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initKaKaoTalkInstalled();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,23 +66,6 @@ class _LogInState extends State<LogIn> {
                         padding: EdgeInsets.all(40.0),
                         child: Column(
                           children: <Widget>[
-                            TextField(
-                              controller: controller1,
-                              decoration: InputDecoration(
-                                labelText: 'ID',
-                                hintText: 'Enter your ID',
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            TextField(
-                              controller: controller2,
-                              decoration: InputDecoration(
-                                labelText: 'PASSWORD',
-                                hintText: 'Enter your PW',
-                              ),
-                              keyboardType: TextInputType.text,
-                              obscureText: true,
-                            ),
                             SizedBox(
                               height: 40.0,
                             ),
@@ -75,16 +73,11 @@ class _LogInState extends State<LogIn> {
                               minWidth: 100.0,
                               height: 50.0,
                               child: ElevatedButton(
-                                child: Text('LOGIN'),
+                                child: Text('게스트 로그인'),
                                 onPressed: (){
-              
-                                  if(controller1.text == 'test' && controller2.text == '1234'){
+                                    provider.add("61da81813e4fad319183edd1");
                                     Navigator.push(context, 
                                       MaterialPageRoute(builder: (BuildContext context) => Lobby()));
-                                  } else{
-                                    showSnackBar(context);
-                                  }
-              
                                 },
                               )
                             ),
@@ -93,9 +86,12 @@ class _LogInState extends State<LogIn> {
                                 height: 50.0,
                                 child: TextButton(
                                     child: Image.asset('assets/kakao_login.png'),
-                                    onPressed:  () async {
+                                    onPressed: () async {
                                       try {
-                                        final token = await UserApi.instance.loginWithKakaoTalk();
+                                        final token = _isKaKaoTalkInstalled
+                                        ? await UserApi.instance.loginWithKakaoTalk() 
+                                        : await UserApi.instance.loginWithKakaoAccount();
+                                        
                                         print('res이에요'+token.toString());
                                         User kakaoUser = await UserApi.instance.me();
                                         var name = kakaoUser.properties!['nickname'].toString();
@@ -110,18 +106,7 @@ class _LogInState extends State<LogIn> {
                                           MaterialPageRoute(builder: (BuildContext context) => MyPage()));
                                       } catch (e) {
                                         print('error on login: $e');
-  }
-                                    },
-                                )
-                            ),
-                            ButtonTheme(
-                              minWidth: 100.0,
-                                height: 50.0,
-                                child: ElevatedButton(
-                                    child: Text("SIGN UP"),
-                                    onPressed: () {
-                                      Navigator.pushReplacement(context, 
-                                        MaterialPageRoute(builder: (BuildContext context) => SignUp()));
+                                      }
                                     },
                                 )
                             ),
