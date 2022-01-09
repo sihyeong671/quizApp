@@ -75,7 +75,7 @@ class _InGameState extends State<InGame> {
                         ],
                       ),
                       Expanded(
-                        child: gameStart ? PhotoQuiz() : BeforeGame()
+                        child: gameStart ? PhotoQuiz() : BeforeGame(gameTitle: widget.gameTitle)
                       ),
                       Column(
                         children: <Widget>[
@@ -120,9 +120,12 @@ class _InGameState extends State<InGame> {
   }
   
   showMessageMe(String msg){
-    setState(() {
-      chat.add(ChatMessage(isSender: true, text: msg));
-    });
+    if(mounted){
+      setState(() {
+        chat.add(ChatMessage(isSender: true, text: msg));
+      });
+    }
+    
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
       duration: Duration(milliseconds: 200),
@@ -192,7 +195,10 @@ class PhotoQuiz extends StatelessWidget {
 
 
 class BeforeGame extends StatelessWidget {
-  const BeforeGame({ Key? key }) : super(key: key);
+  
+  final String? gameTitle;
+
+  const BeforeGame({ Key? key, @required this.gameTitle}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -205,6 +211,7 @@ class BeforeGame extends StatelessWidget {
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
+            leaveRoom(gameTitle);
           },
           child: Text("나가기")
         )

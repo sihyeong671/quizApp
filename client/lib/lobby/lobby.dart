@@ -15,9 +15,6 @@ class Lobby extends StatefulWidget {
 }
 
 class _LobbyState extends State<Lobby> {
-  
-  Room Room1 = new Room(6, 3, '노래', '게임하자', false, false);
-  Room Room2 = new Room(6, 1, '음악', '게임ㄱㄱ', false, false);
 
   List<Room> rooms = [];
 
@@ -33,24 +30,23 @@ class _LobbyState extends State<Lobby> {
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
+  // void _onLoading() async{
+  //   // monitor network fetch
+  //   await Future.delayed(Duration(milliseconds: 1000));
     
-    // if failed,use loadFailed(),if no data return,use LoadNodata()
-    if(mounted)
-    setState(() {
+  //   // if failed,use loadFailed(),if no data return,use LoadNodata()
+  //   if(mounted)
+  //   setState(() {
 
-    });
-    _refreshController.loadComplete();
-  }
+  //   });
+  //   _refreshController.loadComplete();
+  // }
 
 
   @override
   void initState() {
     super.initState();
     initSocket();
-    rooms.addAll({Room1, Room2});
     _initSocketListener();
     connectSocket();
   }
@@ -121,6 +117,7 @@ class _LobbyState extends State<Lobby> {
                                   TextButton(
                                     child: Text('참가하기'),
                                     onPressed: () {
+                                      joinRoom(rooms[index].gameTitle);
                                       Navigator.push(context, 
                                         MaterialPageRoute(builder: (BuildContext context) => InGame(gameTitle: rooms[index].gameTitle)));
                                     },

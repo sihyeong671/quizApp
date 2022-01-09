@@ -13,6 +13,11 @@ initSocket() async{
       .setTransports(['websocket'])
       .disableAutoConnect()
       .build());
+  // _socket = IO.io('http://localhost:8080',
+  //   IO.OptionBuilder()
+  //     .setTransports(['websocket'])
+  //     .disableAutoConnect()
+  //     .build());
 }
 
 // 소켓 연결
@@ -33,9 +38,18 @@ makeRoom(String roomName, String? gameType, bool isLock){
   _socket.emit('make-room',  dictionary); // 방 정보 전달
 }
 
-// 빠른 입장
+// 빠른입장
 quickEntry(){
   _socket.emit('quick-entry', 'random');
+}
+
+// 참가하기
+joinRoom(roomName){
+  _socket.emit('join-room', roomName);
+}
+
+leaveRoom(roomName){
+  _socket.emit('leave-room', roomName);
 }
 
 // on(send)
@@ -58,6 +72,7 @@ setRoomData(Function updateRoomData){
   });
 }
 
+// 룸 정보 갱신(pull_to_refresh)
 getRoomData(){
   _socket.emit('refresh-room');
 }
