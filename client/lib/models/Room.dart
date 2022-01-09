@@ -45,5 +45,4 @@ class DetailRoom{
       this.person = person,
       this.chat = chat;
 
-
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:client/utils/socketManager.dart';
+
 
 class ChatInputField extends StatefulWidget {
-  const ChatInputField({ Key? key }) : super(key: key);
+  final String? gameTitle;
+  final Function? showMessageMe;
+  const ChatInputField({ Key? key, @required this.gameTitle, @required this.showMessageMe}) : super(key: key);
 
   @override
   _ChatInputFieldState createState() => _ChatInputFieldState();
@@ -11,19 +14,11 @@ class ChatInputField extends StatefulWidget {
 class _ChatInputFieldState extends State<ChatInputField> {
 
   TextEditingController _msgController = TextEditingController();
-  late final IO.Socket socket;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    socket = IO.io('http://10.0.2.2:8080',
-    IO.OptionBuilder()
-      .setTransports(['websocket'])
-      .disableAutoConnect()
-      .build());
-    socket.connect();
   }
 
   @override
@@ -71,7 +66,11 @@ class _ChatInputFieldState extends State<ChatInputField> {
                     SizedBox(width: 20.0 / 4),
                     IconButton(
                       onPressed: (){
-                        socket.emit("send-message", _msgController.text);
+                        if(_msgController.text != ''){
+                          widget.showMessageMe!(_msgController.text);
+                          sendMessage(_msgController.text, widget.gameTitle!);
+                          _msgController.clear();
+                        }
                       },
                       icon: Icon(Icons.send_rounded),
                       color: Theme.of(context)

@@ -27,6 +27,8 @@ class _LobbyState extends State<Lobby> {
   void _onRefresh() async{
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
+    // 이게 맞나?
+    getRoomData();
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
@@ -34,6 +36,7 @@ class _LobbyState extends State<Lobby> {
   void _onLoading() async{
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
+    
     // if failed,use loadFailed(),if no data return,use LoadNodata()
     if(mounted)
     setState(() {
@@ -54,9 +57,7 @@ class _LobbyState extends State<Lobby> {
 
   _initSocketListener(){
     roomExistenceCheck(_showToastMessage);
-    updateRoomInfo(_updateInfo);
-    setRoomData(_initRoomData);
-    removeRoom(_removeRoomData);
+    setRoomData(_updateRoomData);
   }
 
   @override
@@ -113,6 +114,7 @@ class _LobbyState extends State<Lobby> {
                                 leading: Text('${index+1}'),
                                 title: Text('${rooms[index].gameTitle}'),
                                 subtitle: Text('${rooms[index].gameType}'),
+                                trailing: Text('${rooms[index].currentNum}/${rooms[index].totalNum}'),
                               ),
                               ButtonBar(
                                 children: <Widget>[
@@ -120,11 +122,19 @@ class _LobbyState extends State<Lobby> {
                                     child: Text('참가하기'),
                                     onPressed: () {
                                       Navigator.push(context, 
-                                        MaterialPageRoute(builder: (BuildContext context) => InGame()));
+                                        MaterialPageRoute(builder: (BuildContext context) => InGame(gameTitle: rooms[index].gameTitle)));
                                     },
                                   )
                                 ]
                               ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  rooms[index].isLock ? Icon(Icons.lock_open_sharp) : Icon(Icons.lock_sharp),
+                                  rooms[index].isGameStart ? Text("게임 중") : Text("게임 전")
+                                ],
+                              )
                             ]
                           )
                         );
@@ -185,16 +195,16 @@ class _LobbyState extends State<Lobby> {
 
 
 
-  _initRoomData(data){
+  _updateRoomData(data){
     List<Room> initRooms = [];
 
     data.forEach((k, v){
       late int totalNum;
-        late int currentNum;
-        late String gameType;
-        late String gameTitle;
-        late bool isLock;
-        late bool isGameStart;
+      late int currentNum;
+      late String gameType;
+      late String gameTitle;
+      late bool isLock;
+      late bool isGameStart;
       v.forEach((kk, vv){
 
         if(kk == 'totalNum') totalNum = vv;
@@ -224,11 +234,6 @@ class _LobbyState extends State<Lobby> {
     });
   }
 
-  _removeRoomData(data){
-    print(data);
-
-  }
-  
 }
 
 class roomModal extends StatefulWidget {
@@ -312,8 +317,8 @@ class _roomModalState extends State<roomModal> {
             Navigator.pop(context);
             makeRoom(_roomNameController.text, gameTitle, _lock);
             print("방만들기");
-            // Navigator.push(context, 
-            //   MaterialPageRoute(builder: (BuildContext context) => InGame()));
+            Navigator.push(context, 
+              MaterialPageRoute(builder: (BuildContext context) => InGame(gameTitle: _roomNameController.text)));
           },
           child: Text('방 만들기')),
         ElevatedButton(
