@@ -96,6 +96,7 @@ io.on('connection', (socket) => {
         socket.join(roomName);
         rooms.set(roomName, roomData);
         detailRooms.set(roomName, detailRoomData);
+        console.log(`${socket.id}님이 ${roomName}을 만들었습니다`)
         // 페이지 전환
       }
       else{
@@ -112,10 +113,10 @@ io.on('connection', (socket) => {
 
   // 참가하기
   socket.on('join-room', (roomName) => {
+    console.log(`${socket.id}가 ${roomName}에 참가했습니다`)
     socket.join(roomName);
-    if(rooms.get(roomName)[currentNum] < 6){
-      rooms.get(roomName)[currentNum]++;
-      rooms.get(roomName)[person].push(socket.id);
+    if(rooms.get(roomName).currentNum < 6){
+      rooms.get(roomName).currentNum++;
     }
     else{
       socket.emit('fail-join', '인원이 다 찼습니다');
@@ -124,22 +125,21 @@ io.on('connection', (socket) => {
 
   // 빠른입장
   socket.on("quick-entry", () => {
-    console.log("빠른 입장");
+    console.log("빠른 입장 / 현재 막혀있습니다");
     // socket.emit("update", Object.fromEntries(rooms));
   })
 
   // 방 업데이트
   socket.on('refresh-room', () => {
-    console.log('방 정보 전달');
+    console.log('방이 업데이트 되었습니다')
     socket.emit('update-room', Object.fromEntries(rooms));
   })
 
   // 방 나가기
   socket.on("leave-room", (roomName) => {
+    console.log(`${socket.id}님이 ${roomName}을 나갔습니다`)
     socket.leave(roomName);
-    rooms.get(roomName)[currentNum]--;
-    const idx = rooms.get(roomName)[person].indexOf(socket.id);
-    rooms.get(roomName)[person].splice(idx, 1);
+    rooms.get(roomName).currentNum--;
   })
 
   // 게임 준비
@@ -155,15 +155,10 @@ io.on('connection', (socket) => {
   // 메시지 보내기
 
   socket.on('first-get-detail-room', (name)=>{
-    console.log(name);
-    console.log(detailRooms.get(name));
     socket.emit('get-detail-room',detailRooms.get(name));
   });
 
   socket.on('send-message', (data) => {
-    console.log(data);
-    console.log(data.message);
-    console.log(data.gameTitle);
     socket.to(data.gameTitle).emit("receive-message", data.message); // 룸 내의 모든 참가자에게 메시지 전송
   })
 
