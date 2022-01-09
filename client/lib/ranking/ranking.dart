@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:client/utils/floatingButton.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Ranking extends StatefulWidget {
   const Ranking({ Key? key }) : super(key: key);
@@ -9,30 +12,34 @@ class Ranking extends StatefulWidget {
 }
 
 class _RankingState extends State<Ranking> {
-  final List<String> users = <String>[
-    '김기영',
-    '김기영',
-    '김기영',
-    '김기영',
-    '김기영',
-    '김기영',
-    '김기영',
-  ]; 
 
-  final List<String> scores = <String>[
-    '48,684',
-    '47,122',
-    '15,486',
-    '9,156',
-    '5,612',
-    '176',
-    '65',
-  ]; 
+  late var jsonData = [];
+  late var jsonDataFromFour = [];
+
+  fetchRanking() async {
+    try{
+      var res = await http.get(Uri.parse("http://10.0.2.2:8080/user/all"));
+      setState(() {
+        jsonData = jsonDecode(res.body);
+        jsonData.sort((a, b) => b['score'].compareTo(a['score']));
+        jsonDataFromFour = jsonData.sublist(3);
+        print(jsonData);
+      });
+    } catch(e){
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchRanking();
+  }
   
   @override
   Widget build(BuildContext context) {
     var _listView = ListView.separated(
-            itemCount: users.length,
+            itemCount: jsonDataFromFour.length,
             padding: EdgeInsets.all(8),
             itemBuilder: (context, index) {
               return Card(
@@ -48,12 +55,12 @@ class _RankingState extends State<Ranking> {
                             width: 10.0,
                           ),
                           CircleAvatar(
-                            backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            backgroundImage: NetworkImage(jsonDataFromFour[index]['img']),
                           )
                         ],
                       ),
-                      title: Text('${users[index]}'),
-                      subtitle: Text('${scores[index]}'),
+                      title: Text('${jsonDataFromFour[index]['nickName']}'),
+                      subtitle: Text('${jsonDataFromFour[index]['score']}'),
                     ),
                   ]
                 )
@@ -84,15 +91,15 @@ class _RankingState extends State<Ranking> {
                   backgroundColor: Colors.amberAccent[700],
                   child: CircleAvatar(
                       radius: 68.0,
-                      backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                      backgroundImage: NetworkImage(jsonData[0]['img']),
                   ),
                 ),
               ),
               SizedBox(
                   height: 10.0
               ),
-              Text('1등! 김기영'),
-              Text('180,265'),
+              Text('1등! ${jsonData[0]['nickName']}'),
+              Text('${jsonData[0]['score']}'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -104,14 +111,14 @@ class _RankingState extends State<Ranking> {
                         backgroundColor: Colors.grey[400],
                         child: CircleAvatar(
                             radius: 43.0,
-                            backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            backgroundImage: NetworkImage(jsonData[1]['img']),
                         ),
                       ),
                       SizedBox(
                           height: 10.0
                         ),
-                      Text('2등! 김기영'),
-                      Text('90,865'),
+                      Text('2등! ${jsonData[1]['nickName']}'),
+                      Text('${jsonData[1]['score']}'),
                     ],
                   ),
                   Column(
@@ -121,14 +128,14 @@ class _RankingState extends State<Ranking> {
                         backgroundColor: Colors.brown,
                         child: CircleAvatar(
                             radius: 43.0,
-                            backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                            backgroundImage: NetworkImage(jsonData[2]['img']),
                         ),
                       ),
                       SizedBox(
                           height: 10.0
                         ),
-                      Text('3등! 김기영'),
-                      Text('55,155'),
+                      Text('3등! ${jsonData[2]['nickName']}'),
+                      Text('${jsonData[2]['score']}'),
                     ],
                   ),
                 ],
@@ -144,31 +151,3 @@ class _RankingState extends State<Ranking> {
     );
   }
 }
-
-// class UsingSeparateListConstructing extends StatelessWidget {
-  
-  
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.separated(
-//       itemCount: users.length,
-//       padding: EdgeInsets.all(8),
-//       itemBuilder: (context, index) {
-//         return Card(
-//           child: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: <Widget>[
-//               ListTile(
-//                 leading: Text('${index+1}'),
-//                 title: Text('${users[index]}'),
-//                 subtitle: Text('${users[index]}'),
-//               ),
-//             ]
-//           )
-//         );
-//       }, separatorBuilder: (BuildContext context, int index) {
-//         return Divider();
-//       },
-//     );
-//   }
-// }

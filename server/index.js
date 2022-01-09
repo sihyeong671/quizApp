@@ -3,8 +3,9 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import Server from 'socket.io'
 import http from 'http'
-import userRouter from './router/api/users.js' // .js붙여줘야함 (폴더안에 index.js 있으면 js쓸 필요없음)
 import { findSourceMap } from 'module'
+import userRouter from './router/users.js' // .js붙여줘야함 (폴더안에 index.js 있으면 js쓸 필요없음)
+import bodyParser from 'body-parser'
 
 dotenv.config()
 const {PORT} = process.env
@@ -14,7 +15,12 @@ const app = express()
 app.use(cors())
 app.use(express.json()) //body-parser와 동일
 
-app.use("/users",userRouter);
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
+app.use("/user",userRouter)
+
 
 
 const httpServer = http.createServer(app)

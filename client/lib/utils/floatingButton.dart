@@ -32,7 +32,7 @@ class FloatingButton extends StatelessWidget {
               backgroundColor: Colors.red,
               label: 'LOBBY',
               onTap: () {
-                Navigator.push(context, 
+                Navigator.pushReplacement(context, 
                   MaterialPageRoute(builder: (BuildContext context) => Lobby()));
               },
             ),
@@ -41,7 +41,7 @@ class FloatingButton extends StatelessWidget {
               backgroundColor: Colors.blue,
               label: 'RANKING',
               onTap: () {
-                Navigator.push(context, 
+                Navigator.pushReplacement(context, 
                   MaterialPageRoute(builder: (BuildContext context) => Ranking()));
               },
             ),
@@ -50,7 +50,7 @@ class FloatingButton extends StatelessWidget {
               backgroundColor: Colors.green,
               label: 'MY PAGE',
               onTap: () {
-                Navigator.push(context, 
+                Navigator.pushReplacement(context, 
                   MaterialPageRoute(builder: (BuildContext context) => MyPage()));
               },
             ),

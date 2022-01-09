@@ -1,21 +1,22 @@
 import mongoose from "mongoose";
-// const mongoose = require('mongoose');
 import validator from "express-validator";
+
 
 mongoose.connect('mongodb://localhost:27017/test')
   .then(()=>console.log("Connected to MongoDB"))
   .catch((err)=> console.log(err))
 
 const UserSchema = new mongoose.Schema({
+    userID: {
+        type: String,
+    },
     nickName:{
         type: String,
-        trim: true,
-        unique: true
+        trim: true
     },
-    // img:{
-    //     data: Buffer,
-    //     contentType: String
-    // },
+    img:{
+        type: String,
+    },
     score:{
         type: Number,
         default: 0
