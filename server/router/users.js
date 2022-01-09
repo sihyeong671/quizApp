@@ -6,8 +6,14 @@ import db from '../db.js'
 
 const userRouter = express.Router()
 
+userRouter.get('/all', async (req, res) =>  {
+    console.log("유저정보요청 all")
+    let userData = await Users.find()
+    res.json(userData);
+})
+
 userRouter.get('/:id', async (req, res) =>  {
-    console.log("유저정보요청")
+    console.log("유저정보요청 id")
     let userData = await Users.find({userID: req.params.id})
     res.json(userData);
 })
