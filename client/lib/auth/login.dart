@@ -74,7 +74,6 @@ class _LogInState extends State<LogIn> {
                               child: ElevatedButton(
                                 child: Text('게스트 로그인'),
                                 onPressed: (){
-                                    provider.add("61da81813e4fad319183edd1");
                                     Navigator.push(context, 
                                       MaterialPageRoute(builder: (BuildContext context) => Lobby()));
                                 },
@@ -97,7 +96,7 @@ class _LogInState extends State<LogIn> {
                                         var name = kakaoUser.properties!['nickname'].toString();
                                         var image = kakaoUser.properties!['thumbnail_image'].toString();
 
-                                        provider.add(userID);
+                                        provider.add(userID, name);
                                         try{
                                           final res = await http.get(Uri.parse('http://10.0.2.2:8080/user/${userID}'));
                                         } catch(e){
