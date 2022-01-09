@@ -6,7 +6,6 @@ import 'package:client/myPage/myPage.dart';
 import 'package:client/provider/userID.dart';
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
-import 'package:client/auth/signUp.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/all.dart';
 
@@ -92,16 +91,21 @@ class _LogInState extends State<LogIn> {
                                         ? await UserApi.instance.loginWithKakaoTalk() 
                                         : await UserApi.instance.loginWithKakaoAccount();
                                         
-                                        print('res이에요'+token.toString());
+                                        // print(UserApi.instance.accessTokenInfo().toString());
                                         User kakaoUser = await UserApi.instance.me();
+                                        var userID = kakaoUser.id.toString();
                                         var name = kakaoUser.properties!['nickname'].toString();
                                         var image = kakaoUser.properties!['thumbnail_image'].toString();
 
-                                        
-                                        var res = await http.post(Uri.parse('http://10.0.2.2:8080/user/save'),
+                                        provider.add(userID);
+                                        try{
+                                          final res = await http.get(Uri.parse('http://10.0.2.2:8080/user/${userID}'));
+                                        } catch(e){
+                                          await http.post(Uri.parse('http://10.0.2.2:8080/user/save'),
                                           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                                          body: {"nickName": name, "img": image});
-                                        provider.add(jsonDecode(res.body)['_id']);
+                                          body: {"userID": userID, "nickName": name, "img": image});
+                                        }
+                                        
                                         Navigator.push(context, 
                                           MaterialPageRoute(builder: (BuildContext context) => MyPage()));
                                       } catch (e) {

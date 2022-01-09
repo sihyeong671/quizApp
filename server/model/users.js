@@ -7,6 +7,9 @@ mongoose.connect('mongodb://localhost:27017/test')
   .catch((err)=> console.log(err))
 
 const UserSchema = new mongoose.Schema({
+    userID: {
+        type: String,
+    },
     nickName:{
         type: String,
         trim: true
