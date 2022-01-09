@@ -5,21 +5,22 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 late final IO.Socket _socket;
 
 
-connectSocket() async{
+initSocket() async{
   _socket = IO.io('http://10.0.2.2:8080',
     IO.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()
       .build());
-  _socket.connect(); // 연결
+}
 
-
+connectSocket(){
+  _socket.connect();
 }
 
 makeRoom(String roomName, String? gameType, bool isLock){
 
   Map dictionary = {
-    'roomName': roomName,
+    'roomName': roomName, //gameTitle이랑 동일
     'gameType': gameType,
     'isLock': isLock
   };
@@ -46,3 +47,18 @@ updateRoomInfo(Function updateInfo){
     updateInfo(data);
   });
 }
+
+setRoomData(Function initRoomData){
+  _socket.on("first-send-room", (data){
+    print("first-send-room");
+    initRoomData(data);
+  });
+}
+
+removeRoom(Function updateRoomData){
+  _socket.on('remove-room', (data){
+    print(data);
+    updateRoomData(data);
+  });
+}
+

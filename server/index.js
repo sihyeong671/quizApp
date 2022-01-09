@@ -28,19 +28,21 @@ const io = new Server(httpServer,{cors: {origin: '*'}})
 let rooms = new Map();
 rooms.set('asdf', {
   totalNum: 6,
-  currentNum: 0,
+  currentNum: 3,
   gameType: '노래',
+  gameTitle: '게임하자',
   isLock: false,
-  person:[
-    '1'
-  ]
+  isGameStart: false
 })
+
+let detailRooms = new Map();
 
 
 io.on('connection', (socket) => {
   console.log('socket connect...')
 
-  // socket.emit("send-room-info", roomObj);
+  // 처음 연결할때
+  socket.emit("first-send-room", Object.fromEntries(rooms));
 
   socket.on("make-room", (roomInfo) => {
     try{
@@ -60,20 +62,18 @@ io.on('connection', (socket) => {
         gameType: gameType,
         gameTitle: roomName,
         isLock: isLock,
-        person:[
-          socket.id
-        ]
+        isGameStart: false
       }
 
       if(!check){
         socket.join(roomName);
-        rooms.set(roomName,roomData);
+        rooms.set(roomName, roomData);
+        // 페이지 전환 해야함
         socket.emit("update", roomData);
       }
-      
       else{
         console.log("이미 방이 존재 합니다 혹은 알 수 없는 오류")
-        socket.emit("room-already-exist", "같은이름의 방이 존재합니다");
+        socket.emit("room-already-exist", "같은 이름의 방이 존재합니다");
       }
     }catch(e){
       console.log(e)
@@ -86,14 +86,20 @@ io.on('connection', (socket) => {
     if(rooms.get(roomName)[currentNum] < 6){
       rooms.get(roomName)[currentNum]++;
       rooms.get(roomName)[person].push(socket.id);
-      socket.emit('update', Object.fromEntries(rooms));
     }
-    socket.emit('fail-join', '인원이 다 찼습니다');
+    else{
+      socket.emit('fail-join', '인원이 다 찼습니다');
+    }
   })
 
   socket.on("quick-entry", () => {
     console.log("빠른 입장");
     // socket.emit("update", Object.fromEntries(rooms));
+  })
+
+  socket.on('update-room', () => {
+    console.log('방 정보 전달');
+    socket.emit('room-info', Object.entries(rooms));
   })
 
   socket.on("leave-room", (roomName) => {
@@ -117,12 +123,9 @@ io.on('connection', (socket) => {
     socket.to(roomName).emit("receive-message", msg); // 룸 내의 모든 참가자에게 메시지 전송
   })
 
-
   socket.on('remove-room', (roomName)=>{
-    delete rooms[roomName];
     socket.emit("update-room", '');
   })
-
 
   socket.on('disconnect', () => {
     console.log("disconnected...")

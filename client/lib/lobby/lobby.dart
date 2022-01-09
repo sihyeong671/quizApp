@@ -5,6 +5,7 @@ import 'package:client/utils/socketManager.dart';
 import 'package:client/models/Room.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'dart:convert';
 
 class Lobby extends StatefulWidget {
   const Lobby({ Key? key }) : super(key: key);
@@ -15,10 +16,10 @@ class Lobby extends StatefulWidget {
 
 class _LobbyState extends State<Lobby> {
   
-  Room Room1 = new Room(6, 3, '노래', '게임하자', false, ['test1', 'test2', 'test3']);
-  Room Room2 = new Room(6, 1, '음악', '게임ㄱㄱ', false, ['1번']);
+  Room Room1 = new Room(6, 3, '노래', '게임하자', false, false);
+  Room Room2 = new Room(6, 1, '음악', '게임ㄱㄱ', false, false);
 
-  final List<Room> rooms = [];
+  List<Room> rooms = [];
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -45,15 +46,17 @@ class _LobbyState extends State<Lobby> {
   @override
   void initState() {
     super.initState();
-    connectSocket();
+    initSocket();
     rooms.addAll({Room1, Room2});
     _initSocketListener();
-    
+    connectSocket();
   }
 
   _initSocketListener(){
     roomExistenceCheck(_showToastMessage);
     updateRoomInfo(_updateInfo);
+    setRoomData(_initRoomData);
+    removeRoom(_removeRoomData);
   }
 
   @override
@@ -148,12 +151,13 @@ class _LobbyState extends State<Lobby> {
 
 
   _updateInfo(data){
+
     late int totalNum;
     late int currentNum;
     late String gameType;
     late String gameTitle;
     late bool isLock;
-    List<String> person = [];
+    late bool isGameStart;
 
     data.forEach((name, value){
       if(name == 'totalNum') totalNum = value;
@@ -161,36 +165,70 @@ class _LobbyState extends State<Lobby> {
       else if(name == 'gameType') gameType = value;
       else if(name == 'gameTitle') gameTitle = value;
       else if(name == 'isLock') isLock = value;
-      else if(name == 'person'){
-        value.forEach((v){
-          person.add(v);
-        });
-      }
+      else if(name == 'isGameStart') isGameStart = value;
     });
     
-
-    print(totalNum);
-    print(currentNum);
-    print(gameType);
-    print(gameTitle);
-    print(isLock);
-    print(person);
-
     Room newRoom = new Room(
       totalNum,
       currentNum,
       gameType,
       gameTitle,
       isLock,
-      person
+      isGameStart
     );
     print(newRoom);
     
-
     setState(() {
       rooms.add(newRoom);
     });
   }
+
+
+
+  _initRoomData(data){
+    List<Room> initRooms = [];
+
+    data.forEach((k, v){
+      late int totalNum;
+        late int currentNum;
+        late String gameType;
+        late String gameTitle;
+        late bool isLock;
+        late bool isGameStart;
+      v.forEach((kk, vv){
+
+        if(kk == 'totalNum') totalNum = vv;
+        else if(kk == 'currentNum') currentNum = vv;
+        else if(kk == 'gameType') gameType = vv;
+        else if(kk == 'gameTitle') gameTitle = vv;
+        else if(kk == 'isLock') isLock = vv;
+        else if(kk == 'isGameStart') isGameStart = vv;
+
+      });
+
+      Room roomInstance = new Room(
+          totalNum,
+          currentNum,
+          gameType,
+          gameTitle,
+          isLock,
+          isGameStart
+        );
+
+      initRooms.add(roomInstance);
+
+    });
+
+    setState(() {
+      rooms = initRooms;
+    });
+  }
+
+  _removeRoomData(data){
+    print(data);
+
+  }
+  
 }
 
 class roomModal extends StatefulWidget {
@@ -206,7 +244,7 @@ class _roomModalState extends State<roomModal> {
   TextEditingController _pwController = TextEditingController();
 
   bool _lock = true;
-  String? dropdownValue = '노래';
+  String? gameTitle = '노래';
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +265,7 @@ class _roomModalState extends State<roomModal> {
                 ),
               ),
               DropdownButton(
-                value:dropdownValue,
+                value:gameTitle,
                 icon: Icon(Icons.add),
                 items: <String>['인물', '영화', '노래'].map
                   <DropdownMenuItem<String>>((String value){
@@ -239,7 +277,7 @@ class _roomModalState extends State<roomModal> {
               
                 onChanged: (String? newValue){
                   setState(() {
-                    dropdownValue = newValue;
+                    gameTitle = newValue;
                   });
                 }),
               Container(
@@ -272,7 +310,10 @@ class _roomModalState extends State<roomModal> {
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
-            makeRoom(_roomNameController.text, dropdownValue, _lock);
+            makeRoom(_roomNameController.text, gameTitle, _lock);
+            print("방만들기");
+            // Navigator.push(context, 
+            //   MaterialPageRoute(builder: (BuildContext context) => InGame()));
           },
           child: Text('방 만들기')),
         ElevatedButton(
