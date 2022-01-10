@@ -26,6 +26,12 @@ userRouter.post('/save' , (req, res) => {
     })
 });
 
+userRouter.delete('/:id', async (req, res) => {
+    console.log("유저정보삭제 id");
+    let userData = await Users.deleteOne({userID: req.params.id});
+    res.json(userData);
+})
+
 
 
 export default userRouter;

@@ -297,6 +297,4 @@ class _BeforeGameState extends State<BeforeGame> {
       ],
     );
   }
-  
-  
-}
+} 
