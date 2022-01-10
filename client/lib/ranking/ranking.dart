@@ -79,7 +79,7 @@ class _RankingState extends State<Ranking> {
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 50.0)),
+              Padding(padding: EdgeInsets.only(top: 35.0)),
               Image(
                 image: AssetImage('assets/crown.png'),
                 width: 70.0,
@@ -139,6 +139,9 @@ class _RankingState extends State<Ranking> {
                     ],
                   ),
                 ],
+              ),
+              SizedBox(
+                  height: 15.0
               ),
               Container(
                 height: 300,

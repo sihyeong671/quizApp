@@ -79,7 +79,7 @@ class _MyPageState extends State<MyPage> {
                   onSelected: (item) => {SelectedItem(context, item)},
                 ),
               ),
-              Padding(padding: EdgeInsets.only(top: 120.0)),
+              Padding(padding: EdgeInsets.only(top: 100.0)),
               Center(
                 child: CircleAvatar(
                   radius: 70.0,
@@ -90,24 +90,24 @@ class _MyPageState extends State<MyPage> {
               SizedBox(
                 height: 40.0
               ),
-              Text('Nickname : ${_name}'),
+              Text('이름 : ${_name}'),
               SizedBox(
                 height: 40.0
               ),
               if(!_isGuest)...[
-              Text('Score : ${_score}'),
+              Text('점수 : ${_score}'),
               SizedBox(
                 height: 40.0
               ),
-              Text('Ranking : 1'),
+              Text('랭킹 : 1'),
               SizedBox(
                 height: 40.0
               ),
-              Text('Max Score : -'),
+              Text('최고 점수 : -'),
               SizedBox(
                 height: 40.0
               ),
-              Text('Max Ranking : -'),
+              Text('최고 랭킹 : -'),
               ]
             ],
           ),

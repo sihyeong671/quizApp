@@ -71,25 +71,6 @@ class _LogInState extends State<LogIn> {
                               SizedBox(
                                 height: 100.0,
                               ),
-                              // Image.asset('assets/quiz_icon.png'),
-                              SizedBox(
-                                width: 296.0,
-                                height: 42.0,
-                                child: ElevatedButton.icon(
-                                  icon: Icon(Icons.add, size: 18),
-                                  label: Text('게스트 로그인'),
-                                  onPressed: () async {
-                                      final response = await http.get(Uri.parse("https://nickname.hwanmoo.kr/?format=json&count=1"));
-                                      final jsonData = jsonDecode(response.body);
-                                      var name = jsonData['words'][0];
-                                      var url = "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80";
-                                      
-                                      provider.add("0", name, url, 0, true);
-                                      Navigator.push(context, 
-                                        MaterialPageRoute(builder: (BuildContext context) => Lobby()));
-                                  },
-                                )
-                              ),
                               ButtonTheme(
                                 minWidth: 100.0,
                                   height: 50.0,
@@ -130,6 +111,24 @@ class _LogInState extends State<LogIn> {
                                         }
                                       },
                                   )
+                              ),
+                              SizedBox(
+                                width: 296.0,
+                                height: 42.0,
+                                child: ElevatedButton.icon(
+                                  icon: Icon(Icons.add, size: 18),
+                                  label: Text('게스트 로그인'),
+                                  onPressed: () async {
+                                      final response = await http.get(Uri.parse("https://nickname.hwanmoo.kr/?format=json&count=1"));
+                                      final jsonData = jsonDecode(response.body);
+                                      var name = jsonData['words'][0];
+                                      var url = "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80";
+                                      
+                                      provider.add("0", name, url, 0, true);
+                                      Navigator.push(context, 
+                                        MaterialPageRoute(builder: (BuildContext context) => Lobby()));
+                                  },
+                                )
                               ),
                             ]
                           )
