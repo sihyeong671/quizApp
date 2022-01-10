@@ -44,6 +44,7 @@ dependencies:
   tuple: ^2.0.0
   get_it: ^7.2.0
   provider: ^6.0.2
+  audio_service: ^0.18.3
 
 dev_dependencies:
   flutter_test:
