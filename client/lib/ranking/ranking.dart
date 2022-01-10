@@ -12,9 +12,8 @@ class Ranking extends StatefulWidget {
 }
 
 class _RankingState extends State<Ranking> {
-
   late var jsonData = [];
-  late var jsonDataFromFour = [];
+  late var jsonDataFromFour = jsonData;
 
   fetchRanking() async {
     try{
@@ -143,7 +142,7 @@ class _RankingState extends State<Ranking> {
                   height: 15.0
               ),
               Container(
-                height: 300,
+                height: 250,
                 child: _listView,
               ),
             ]
