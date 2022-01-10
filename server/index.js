@@ -32,9 +32,6 @@ const io = new Server(httpServer,{cors: {origin: '*'}})
 
 let rooms = new Map();
 
-let detailRooms = new Map();
-
-
 io.on('connection', (socket) => {
   console.log('socket connect...')
 
@@ -45,124 +42,96 @@ io.on('connection', (socket) => {
   // 방만들기
   socket.on("make-room", (roomInfo) => {
     try{
-
-      // rooms
-      const roomName = roomInfo.roomName;
-      const gameType = roomInfo.gameType;
+      const roomName = roomInfo.roomName; // key
       const isLock = roomInfo.isLock;
       const name = roomInfo.name;
-      const img = roomInfo.img;
-      let check = false; // 존재하는 방 이름인지 체크
+      const problem = "ㅇㅂㅈㅅ";
+      const answer = "어벤져스";
+      let check; // 방 존재여부
 
-      rooms.forEach((v, k) => {
-        if(k === roomName) check = true;
-      })
+      if(rooms.has(roomName)) check = true; // 존재
+      else check = false; // 없음
 
       const roomData = {
         totalNum: 6,
         currentNum: 1,
-        gameType: gameType,
-        gameTitle: roomName,
         isLock: isLock,
-        isGameStart: false
+        isGameStart: false,
+        problem: problem,
+        answer: answer,
+        users: [[socket.id, 0, name, false]]
       }
 
-
-      // detailRooms
-      let timeLimit; 
-      if(gameType === "노래")       timeLimit = 10; // 처음 맞춘사람만 점수
-      else if(gameType === "영화")  timeLimit = 15; // 처음 맞춘사람만 점수
-      else if(gameType === "인물")  timeLimit = 5; // 못 맞추면 감점
-
-      const detailRoomData = {
-        gameTitle: roomName,
-        gameType: gameType,
-        gameStart: false,
-        gameRound: 1,
-        readyNum: 0,
-        gameTime: timeLimit,
-        person: [
-        //socket, nickname, score, img
-          [socket.id, name, 0, img]
-        ],
-        answer: ''
-        // chat은 필요없음
-      }
-
-      if(!check){
-        socket.join(roomName);
-        rooms.set(roomName, roomData);
-        detailRooms.set(roomName, detailRoomData);
+      if(!check){ // 존재 하지 않는 경우 생성
+        socket.join(roomName); // join
+        rooms.set(roomName, roomData); // Map에 추가
         console.log(`${socket.id}님이 ${roomName}을 만들었습니다`);
-        // socket.broadcast.emit('update-room', Object.fromEntries(rooms));
+        socket.emit('update-room', Object.fromEntries(rooms));
         // 클라이언트에서 페이지 전환
       }
       else{
-        console.log("이미 방이 존재 합니다 혹은 알 수 없는 오류");
+        console.log("이미 방이 존재 합니다");
         socket.emit("room-already-exist", "같은 이름의 방이 존재합니다");
       }
     }catch(e){
       console.log(e)
     }
-
-
-    
   })
 
   // 참가하기
-  socket.on('join-room', (data) => {
-    console.log(`${socket.id}가 ${data.roomName}에 참가했습니다`)
-    socket.join(data.roomName);
-    if(rooms.get(data.roomName).currentNum < 6){
-      rooms.get(data.roomName).currentNum++;
-      detailRooms.get(data.roomName).person.push([socket.id, data.name, 0, data.img]);
-      socket.to(data.roomName).emit("get-detail-room", detailRooms.get(data.roomName));
-      socket.broadcast.emit('update-room', Object.fromEntries(rooms));
+  socket.on('join-room', (roomInfo) => {
 
-      if(rooms.get(data.roomName).currentNum == 2){
-        console.log("게임을 시작합니다")
-        rooms.get(data.roomName).isGameStart = true;
-        detailRooms.get(data.roomName).gameStart = true;
-        io.to(data.roomName).emit('game-start');
-        socket.to(data.roomName).emit('game-start');
-      }
+    const roomName = roomInfo.roomName;
+    const myName = roomInfo.name;
+    
+    socket.join(roomName);
+
+    if(rooms.get(roomName).currentNum < 6 && !rooms.get(roomName).isGameStart){
+      rooms.get(roomName).currentNum++;
+      console.log(`${socket.id}가 ${roomName}에 참가했습니다`);
+      //id, name, score, isReady
+      rooms.get(roomName).person.push([socket.id, myName, 0, false])
+      io.in(roomName).emit("update-inGame-room", rooms.get(roomName));
+
+      // if(rooms.get(roomName).currentNum == 2){
+      //   rooms.get(roomName).isGameStart = true;
+      //   io.in(roomName).emit('game-start');
+      // }
     }
     else{
-      socket.emit('fail-join', '인원이 다 찼습니다');
+      socket.emit('fail-join', null);
     }
     
   })
 
   // 빠른입장
   socket.on("quick-entry", (name) => {
-    console.log("빠른 입장");
     let key;
     let num = 0;
     let check = false;
     rooms.forEach((v, k)=>{
+      // 가장 인원이 많은곳, 6명 미만인 방, 게임 시작전인 방 
       if((v.currentNum > num) && (v.currentNum < 6) && (!v.isGameStart)){
         key = k;
         check = true;
       }
     })
-    socket.join(key);
-    if(check){
+
+    if(check){ // join할 방이 있다.
+      socket.join(key); // join
       rooms.get(key).currentNum++;
-      detailRooms.get(key).person.push([socket.id, name, 0, image]);
+      rooms.get(key).person.push([socket.id, name, 0, false]);
+      console.log(`${socket.id}가 ${key}에 입장하였습니다`);
+      io.to.emit('update-inGame-room', rooms.get(roomName));
 
-      socket.to(key).emit('get-detail-room',detailRooms.get(key));
-      socket.broadcast.emit('update-room', Object.fromEntries(rooms));
-
-      if(rooms.get(key).currentNum == 2){
-        console.log("게임을 시작합니다")
-        rooms.get(key).isGameStart = true;
-        detailRooms.get(key).gameStart = true;
-        socket.to(key).emit('game-start');
-      }
+      // if(rooms.get(key).currentNum == 2){
+      //   rooms.get(key).isGameStart = true;
+      //   socket.to(key).emit('game-start');
+      // }
     }
     else{
       // fail to join
-      socket.emit('fail-to-join', '다시 시도해 주세요');
+      socket.emit('fail-to-join', null);
     }
     
   
@@ -170,104 +139,118 @@ io.on('connection', (socket) => {
 
   // 방 업데이트
   socket.on('refresh-room', () => {
-    console.log('방이 업데이트 되었습니다');
+    console.log(`${socket.id}가 pull to refresh를 사용`);
     socket.emit('update-room', Object.fromEntries(rooms));
   })
 
   // 방 나가기
   socket.on("leave-room", (roomName) => {
-    console.log(`${socket.id}님이 ${roomName}을 나갔습니다`)
+    console.log(`${socket.id}님이 ${roomName}을 나갔습니다`);
     socket.leave(roomName);
-    rooms.has(roomName) && (rooms.get(roomName).currentNum -= 1);
+    rooms.get(roomName).currentNum -= 1; // 현재인원 지우기
+    rooms.get(roomName).users = rooms.get(roomName).users.filter((user)=>{
+      return user[0] !== socket.id;
+    });
     
-    detailRooms.get(roomName).person = detailRooms.get(roomName).person.filter(e => {
-      console.log(e[0], socket.id);
-      if(e[0] === socket.id){
-        return false;
-      }
-      return true;
-    })
-    
-
-    if(detailRooms.get(roomName).person.length == 0){
-      detailRooms.delete(roomName);
+    if(rooms.get(roomName).users.length <= 0){
       rooms.delete(roomName);
-      io.emit('update-room', Object.fromEntries(rooms));
-    }else{
-      socket.to(roomName).emit('get-detail-room', detailRooms.get(roomName));
-    }    
+      // 강제 종료시에도 작동되기 할 것
+    }
+
+    socket.to(roomName).emit('update-inGame-room', rooms.get(roomName));
 
   })
 
   // 게임 시작
-  socket.on('round-start', (roomName)=>{
-    // db
-    // 문제 보내기
+  // socket.on('round-start', (roomName)=>{
+  //   // db
+  //   // 문제 보내기
 
-    setTimeout(()=>{
-      console.log("round-over");
-      socket.emit('round-over');
-      clearInterval(Timercheck);
-    }, 10001);
+  //   detailRooms.get(roomName).answer = "신과함께";
+  //   socket.to(roomName).emit('quiz-content', ({
+  //     quiz: 'ㅅㄱㅎㄲ',
+  //     answer: '신과함께'
+  //   }));
 
-    setInterval(()=>{
-      Timercheck
-    }, 1000)
+  //   setTimeout(()=>{
+  //     console.log("round-over");
+  //     socket.emit('round-over');
+  //     clearInterval(Timercheck);
+  //   }, 10001);
+
+  //   setInterval(()=>{
+  //     Timercheck
+  //   }, 1000)
     
-    detailRooms.get(roomName).answer = "신과함께";
-    socket.to(roomName).emit('quiz-content', ({
-      quiz: 'ㅅㄱㅎㄲ',
-      answer: '신과함께'
-    }));
+  // })
 
+  socket.on('inGame-ready',(data)=>{
+
+    const roomName = data.roomName;
+    const id = data.id;
+    let flag = true; // 모두 준비면 true
+
+    let len = rooms.get(roomName).users.length
+    for(let i = 0; i < len; ++i){
+      if(!rooms.get(roomName).users[i][3]) flag = false;
+      if(rooms.get(roomName).users[i][0] == id) {
+        rooms.get(roomName).users[i][3] = !rooms.get(roomName).users[i][3];
+      }
+      
+    }
     
-  })
+
+    if(!flag){
+      rooms.get(roomName).isGameStart = true;
+      io.in(roomName).emit('game-start')
+    }
+
+    io.in(roomName).emit("update-inGame-room", rooms.get(roomName));
+  });
 
   socket.on('game-over', (roomName)=>{
 
   })
 
-
   // 메시지 보내기
-
-  socket.on('first-get-detail-room', (name)=>{
-    socket.emit('get-detail-room', detailRooms.get(name));
-  });
-
   socket.on('send-message', (data) => {
     
-    const myRoom = detailRooms.get(data.gameTitle)
-    if(myRoom.gameStart){ // 게임중
-      if(data.message === myRoom.answer){
-        myRoom.gameRound++;
-        
-        socket.emit('correct-answer'); // 정답
-        
-        if(myRoom.gameRound > 5){
 
-          socket.to(data.gameTitle).emit('game-over'); // 만들어줘야함
-          socket.to(data.gameTitle).emit('update-room');
-        }else{
-          socket.to(data.gameTitle).emit('round-over'); // 라운드 끝
-          socket.to(data.gameTitle).emit('get-detail-room');
-        }
+    const myRoom = rooms.get(data.roomName)
+    const msg = data.message;
+
+    if(myRoom.isGameStart){ // 게임중
+      if(msg === myRoom.answer){
+        rooms.get(myRoom).isGameStart = false;
+        io.in(myRoom).emit('game-over');
         
+        // socket.emit('correct-answer'); // 정답
+        
+        // if(myRoom.gameRound > 5){
+
+        //   socket.to(data.gameTitle).emit('game-over'); // 만들어줘야함
+        //   socket.to(data.gameTitle).emit('update-room');
+        // }else{
+        //   socket.to(data.gameTitle).emit('round-over'); // 라운드 끝
+        //   socket.to(data.gameTitle).emit('get-detail-room');
+        // }
       }
     }
-
-    socket.to(data.gameTitle).emit("receive-message", data.message); // 룸 내의 모든 참가자에게 메시지 전송
+    socket.to(myRoom).emit("receive-message", data.message); // 룸 내의 모든 참가자에게 메시지 전송
   })
 
   socket.on('disconnect', () => {
     console.log("disconnected...")
   })
 
+  // inGame내에서 요청
+  socket.on('request-inGame-data', (roomName)=>{
+    socket.emit("update-inGame-room", rooms.get(roomName));
+  })
+
 })
 
 
-const Timercheck = ()=>{
-  socket.emit('run-timer')
-}
 
 httpServer.listen(PORT, (err) => {
   console.log(`Listening on port ${PORT}`)
