@@ -117,10 +117,17 @@ io.on('connection', (socket) => {
       detailRooms.get(data.roomName).person.push([socket.id, data.name, 0, data.img]);
       socket.to(data.roomName).emit("get-detail-room", detailRooms.get(roomName));
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
+
+      if(rooms.get(data.roomName).currentNum == 6){
+        console.log("게임을 시작합니다")
+        socket.broadcast.to(data.roomName).emit('game-progress');
+      }
     }
     else{
       socket.emit('fail-join', '인원이 다 찼습니다');
     }
+
+    
     
   })
 
@@ -137,21 +144,24 @@ io.on('connection', (socket) => {
       }
     })
     socket.join(key);
-
     if(check){
       rooms.get(key).currentNum++;
-      detailRooms.get(key).person.push([socket.id, name, false, false, 0]);
+      detailRooms.get(key).person.push([socket.id, name, 0, image]);
 
       socket.to(key).emit('get-detail-room',detailRooms.get(key));
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
+
+      if(rooms.get(key).currentNum == 6){
+        console.log("게임을 시작합니다")
+        socket.broadcast.to(data.roomName).emit('game-progress');
+      }
     }
     else{
       // fail to join
       socket.emit('fail-to-join', '다시 시도해 주세요');
     }
     
-    
-    // socket.emit("update", Object.fromEntries(rooms));
+  
   })
 
   // 방 업데이트
@@ -173,12 +183,13 @@ io.on('connection', (socket) => {
       return true;
     })
     
+
     if(detailRooms.get(roomName).person.length == 0){
       detailRooms.delete(roomName);
       rooms.delete(roomName);
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
     }else{
-      socket.to(roomName).emit('get-detail-room',detailRooms.get(roomName));
+      socket.to(roomName).emit('get-detail-room', detailRooms.get(roomName));
     }
 
     
@@ -186,9 +197,6 @@ io.on('connection', (socket) => {
 
   })
 
-  // 게임 시작
-  socket.on('game-start', (roomName) => {
-  })
 
   // 메시지 보내기
 
@@ -202,7 +210,6 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log("disconnected...")
-
   })
 
 })
