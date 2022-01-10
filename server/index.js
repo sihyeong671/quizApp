@@ -111,11 +111,11 @@ io.on('connection', (socket) => {
   // 참가하기
   socket.on('join-room', (data) => {
     console.log(`${socket.id}가 ${data.roomName}에 참가했습니다`)
-    socket.join(roomName);
+    socket.join(data.roomName);
     if(rooms.get(data.roomName).currentNum < 6){
       rooms.get(data.roomName).currentNum++;
       detailRooms.get(data.roomName).person.push([socket.id, data.name, 0, data.img]);
-      socket.to(data.roomName).emit("get-detail-room", detailRooms.get(roomName));
+      socket.to(data.roomName).emit("get-detail-room", detailRooms.get(data.roomName));
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
 
       if(rooms.get(data.roomName).currentNum == 6){
