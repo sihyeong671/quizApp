@@ -8,7 +8,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 late final IO.Socket _socket;
 
 // 소켓 설정
-initSocket() async{
+initSocket(){
   _socket = IO.io('http://192.249.18.158:80',
     IO.OptionBuilder()
       .setTransports(['websocket'])
@@ -28,18 +28,18 @@ connectSocket(){
 
 
 // 방 만들기
-makeRoom(String roomName, String? gameType, bool isLock, String name, String img){
-
+makeRoom(String roomName, bool isLock, String name){
+  print("방만들기");
   Map dictionary = {
-    'roomName': roomName, //gameTitle이랑 동일
-    'gameType': gameType,
-    'isLock': isLock,
-    'name': name,
-    'img': img
+    "roomName": roomName,
+    "isLock": isLock,
+    "name": name,
+    // img: img
   };
 
   _socket.emit('make-room',  dictionary); // 방 정보 전달
 }
+
 
 // 빠른입장
 quickEntry(name){
@@ -48,18 +48,15 @@ quickEntry(name){
 
 
 // 참가하기
-joinRoom(data){
-  _socket.emit('join-room', data);
+joinRoom(roomInfo){
+  _socket.emit('join-room', roomInfo);
 }
 
-
-// on(send)
+// 방만들기 실패
 roomExistenceCheck(Function floatToastMessage){
-
   _socket.on("room-already-exist", (data){
-    print("이미 방이 존재합니다");
     //토스트 메시지 띄우기
-    floatToastMessage(data);
+    floatToastMessage("이미 방이 존재합니다");
   });
 
 }
@@ -67,7 +64,6 @@ roomExistenceCheck(Function floatToastMessage){
 // 빠른 입장 실패
 failToJoin(Function showFailToast){
   _socket.on('fail-to-join', (data){
-    print('${_socket.id}의 빠른 입장 실패');
     showFailToast(data);
   });
 }
@@ -75,24 +71,47 @@ failToJoin(Function showFailToast){
 // 로비 입장시 전체 방 정보 받기 + 정보 갱신
 setRoomData(Function updateRoomData){
   _socket.on("update-room", (data){
-    print("update-room");
     updateRoomData(data);
   });
 }
 
 // 룸 정보 갱신(pull_to_refresh)
-getRoomData(){
+pullToReFresh(){
   _socket.emit('refresh-room');
 }
 
 
 // inGame.dart
-requestDetailRoomData(String? title){
-  print("클라이언트 데이터 요청");
-  _socket.emit('first-get-detail-room', title);
+requestRoomData(String? title){
+  _socket.emit('request-inGame-data', title);
+}
+
+getInGameData(Function updateInGameData){
+  _socket.on('update-inGame-room',(data){
+    print("getInGameData");
+    print(data);
+    updateInGameData(data);
+  });
 }
 
 // 준비하기
+
+inGameReadyToggle(roomName){
+  _socket.emit('inGame-ready', 
+    {
+      "id": _socket.id,
+      "roomName": roomName 
+    }
+  );
+}
+
+justSetState(Function setState){
+  _socket.on('update-inGame-room', (data){
+    setState();
+  });
+
+}
+
 
 
 // 나가기
@@ -100,33 +119,21 @@ leaveRoom(roomName){
   _socket.emit('leave-room', roomName);
 }
 
-setDetailRoomData(Function setRoomData){
-  _socket.on('get-detail-room', (data){
-    print("get-detail-room ");
-    setRoomData(data);
-  });
-}
 
-getDetailRoomData(){
-  _socket.emit('update-detail-room');
-}
 
-sendMessage(String message, String gameTitle){
+sendMessage(String message, String roomName){
   _socket.emit('send-message',{
     "message": message,
-    "gameTitle": gameTitle
+    "roomName": roomName
   });
 }
 
-// 메시지 브로드 캐스트
+// 메시지 브로드 캐스트f
 broadCastMessage(Function showMessage){
   _socket.on('receive-message', (data){
-    print(data);
     showMessage(data);
   });
 }
-
-// 게임 로직
 
 // 게임 시작
 gameStart(Function gameStart){
@@ -137,41 +144,42 @@ gameStart(Function gameStart){
 }
 
 // 타이머 동작
-runTimer(Function runTimer){
-  _socket.on('run-timer',(data){
-    runTimer();
-  });
-}
+// runTimer(Function runTimer){
+//   _socket.on('run-timer',(data){
+//     runTimer();
+//   });
+// }
 
-// 라운드 시작
-roundStart(roomName){
-  print("라운드 시작");
-  _socket.emit('round-start',roomName);
-}
+// // 라운드 시작
+// roundStart(roomName){
+//   print("라운드 시작");
+//   _socket.emit('round-start',roomName);
+// }
 
 quizContent(Function showQuizData){
   _socket.on('quiz-content', (data){
-    print(data['quiz']);
-    print(data['answer']);
     showQuizData(data["quiz"], data["answer"]);
   });
 }
 
 // 라운드 종료
-roundOver(Function roundOver){
-  _socket.on('round-over',(data){
-    roundOver();
-  });
-}
+// roundOver(Function roundOver){
+//   _socket.on('round-over',(data){
+//     roundOver();
+//   });
+// }
 
 // 정답
-correctAnswer(Function giveScore){
-  _socket.on('correct-answer', (data){
-    giveScore(int.parse(data));
-  });
-}
+// correctAnswer(Function giveScore){
+//   _socket.on('correct-answer', (data){
+//     giveScore(int.parse(data));
+//   });
+// }
 
 // 게임 종료
-gameOver(String roomNumber){
-  _socket.emit('game-over', roomNumber);
+gameOver(){
+  print("게임종료");
+  _socket.on('game-over', (data){
+    
+  });
 }
