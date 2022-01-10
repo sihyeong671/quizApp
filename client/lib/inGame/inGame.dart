@@ -211,32 +211,30 @@ class _InGameState extends State<InGame> {
       else if(k == 'person'){
         v.forEach((vv){
           if(mounted){
-            setState((){
               showUsers.add(new Character(
                 id: vv[0],
                 name: vv[1],
                 score: gameScore,
                 img: vv[3],
               ));
-            });
           }
-          
           
         });
       }
 
       while (showUsers.length < 6) {
-        if(mounted){
-          setState(() {
           showUsers.add(new Character(
-          id: '/',
-          name: '',
-          img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-        ));
-        });
-        }
-        
+            id: '/',
+            name: '',
+            img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+          ));
       }
+      if(mounted){
+        setState(() {
+        
+      });
+      }
+      
     });
 
     if(mounted){
@@ -251,9 +249,9 @@ class _InGameState extends State<InGame> {
     Future.delayed(Duration(milliseconds: 1000));
     print("지연2");
     setState(() {
-      
+      gameRound++;
     });
-    gameRound++;
+    
     // Delay
     roundStart(widget.gameTitle);
   }

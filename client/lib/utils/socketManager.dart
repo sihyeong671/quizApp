@@ -102,8 +102,7 @@ leaveRoom(roomName){
 
 setDetailRoomData(Function setRoomData){
   _socket.on('get-detail-room', (data){
-    print("get-detail-room : ");
-    print(data);
+    print("get-detail-room ");
     setRoomData(data);
   });
 }

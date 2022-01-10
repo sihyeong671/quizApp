@@ -123,7 +123,8 @@ io.on('connection', (socket) => {
         console.log("게임을 시작합니다")
         rooms.get(data.roomName).isGameStart = true;
         detailRooms.get(data.roomName).gameStart = true;
-        socket.broadcast.to(data.roomName).emit('game-start');
+        io.to(data.roomName).emit('game-start');
+        socket.to(data.roomName).emit('game-start');
       }
     }
     else{
@@ -193,7 +194,7 @@ io.on('connection', (socket) => {
     if(detailRooms.get(roomName).person.length == 0){
       detailRooms.delete(roomName);
       rooms.delete(roomName);
-      socket.broadcast.emit('update-room', Object.fromEntries(rooms));
+      io.emit('update-room', Object.fromEntries(rooms));
     }else{
       socket.to(roomName).emit('get-detail-room', detailRooms.get(roomName));
     }    
