@@ -18,7 +18,7 @@ class _RankingState extends State<Ranking> {
 
   fetchRanking() async {
     try{
-      var res = await http.get(Uri.parse("http://10.0.2.2:8080/user/all"));
+      var res = await http.get(Uri.parse("http://192.249.18.158:80/user/all"));
       setState(() {
         jsonData = jsonDecode(res.body);
         jsonData.sort((a, b) => b['score'].compareTo(a['score']));
