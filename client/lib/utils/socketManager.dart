@@ -8,11 +8,16 @@ late final IO.Socket _socket;
 
 // 소켓 설정
 initSocket() async{
-  _socket = IO.io('http://10.0.2.2:8080',
+  _socket = IO.io('http://192.249.18.158:80',
     IO.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()
       .build());
+  // _socket = IO.io('http://localhost:8080',
+  //   IO.OptionBuilder()
+  //     .setTransports(['websocket'])
+  //     .disableAutoConnect()
+  //     .build());
 }
 
 // 소켓 연결
@@ -22,21 +27,32 @@ connectSocket(){
 
 
 // 방 만들기
-makeRoom(String roomName, String? gameType, bool isLock){
+makeRoom(String roomName, String? gameType, bool isLock, String name, String img){
 
   Map dictionary = {
     'roomName': roomName, //gameTitle이랑 동일
     'gameType': gameType,
-    'isLock': isLock
+    'isLock': isLock,
+    'name': name,
+    'img': img
   };
 
   _socket.emit('make-room',  dictionary); // 방 정보 전달
 }
 
-// 빠른 입장
-quickEntry(){
-  _socket.emit('quick-entry', 'random');
+// 빠른입장
+quickEntry(name){
+  _socket.emit('quick-entry', name);
 }
+
+
+// 참가하기
+joinRoom(data){
+  _socket.emit('join-room', data);
+}
+
+
+
 
 // on(send)
 roomExistenceCheck(Function floatToastMessage){
@@ -49,6 +65,13 @@ roomExistenceCheck(Function floatToastMessage){
 
 }
 
+// 빠른 입장 실패
+failToJoin(Function showFailToast){
+  _socket.on('fail-to-join', (data){
+    print('${_socket.id}의 빠른 입장 실패');
+    showFailToast(data);
+  });
+}
 
 // 로비 입장시 전체 방 정보 받기 + 정보 갱신
 setRoomData(Function updateRoomData){
@@ -58,6 +81,7 @@ setRoomData(Function updateRoomData){
   });
 }
 
+// 룸 정보 갱신(pull_to_refresh)
 getRoomData(){
   _socket.emit('refresh-room');
 }
@@ -69,10 +93,34 @@ requestDetailRoomData(String? title){
   _socket.emit('first-get-detail-room', title);
 }
 
-getDetailRoomData(Function setRoomData){
+// 준비하기
+readyForGame(name, title){
+  _socket.emit('ready', {
+    "name": name,
+    "gameTitle": title
+  });
+}
+
+//시작하기
+startForGame(name, title){
+  _socket.emit('game-start', title);
+}
+
+// 나가기
+leaveRoom(roomName){
+  _socket.emit('leave-room', roomName);
+}
+
+setDetailRoomData(Function setRoomData){
   _socket.on('get-detail-room', (data){
+    print("get-detail-room : ");
+    print(data);
     setRoomData(data);
   });
+}
+
+getDetailRoomData(){
+  _socket.emit('update-detail-room');
 }
 
 sendMessage(String message, String gameTitle){

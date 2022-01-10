@@ -5,7 +5,8 @@ import 'package:client/utils/socketManager.dart';
 import 'package:client/models/Room.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'dart:convert';
+import 'package:client/main.dart';
+import 'package:client/provider/userID.dart';
 
 class Lobby extends StatefulWidget {
   const Lobby({ Key? key }) : super(key: key);
@@ -16,10 +17,8 @@ class Lobby extends StatefulWidget {
 
 class _LobbyState extends State<Lobby> {
   
-  Room Room1 = new Room(6, 3, '노래', '게임하자', false, false);
-  Room Room2 = new Room(6, 1, '음악', '게임ㄱㄱ', false, false);
-
   List<Room> rooms = [];
+  final provider = getIt.get<UserID>();
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -28,29 +27,29 @@ class _LobbyState extends State<Lobby> {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // 이게 맞나?
+    print("리프레쉬");
     getRoomData();
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
+  // void _onLoading() async{
+  //   // monitor network fetch
+  //   await Future.delayed(Duration(milliseconds: 1000));
     
-    // if failed,use loadFailed(),if no data return,use LoadNodata()
-    if(mounted)
-    setState(() {
+  //   // if failed,use loadFailed(),if no data return,use LoadNodata()
+  //   if(mounted)
+  //   setState(() {
 
-    });
-    _refreshController.loadComplete();
-  }
+  //   });
+  //   _refreshController.loadComplete();
+  // }
 
 
   @override
   void initState() {
     super.initState();
     initSocket();
-    rooms.addAll({Room1, Room2});
     _initSocketListener();
     connectSocket();
   }
@@ -58,6 +57,7 @@ class _LobbyState extends State<Lobby> {
   _initSocketListener(){
     roomExistenceCheck(_showToastMessage);
     setRoomData(_updateRoomData);
+    failToJoin(_showToastMessage);
   }
 
   @override
@@ -89,7 +89,7 @@ class _LobbyState extends State<Lobby> {
                     ElevatedButton(
                       child: Text('빠른입장'),
                       onPressed: () {
-                        quickEntry();
+                        quickEntry(provider.myName);
                       },
                     ),
                   ],
@@ -121,6 +121,11 @@ class _LobbyState extends State<Lobby> {
                                   TextButton(
                                     child: Text('참가하기'),
                                     onPressed: () {
+                                      joinRoom({
+                                        "roomName": rooms[index].gameTitle,
+                                        "name": provider.myName,
+                                        "img": provider.myImage
+                                      });
                                       Navigator.push(context, 
                                         MaterialPageRoute(builder: (BuildContext context) => InGame(gameTitle: rooms[index].gameTitle)));
                                     },
@@ -159,7 +164,6 @@ class _LobbyState extends State<Lobby> {
     );
   }
 
-
   _updateInfo(data){
 
     late int totalNum;
@@ -192,8 +196,6 @@ class _LobbyState extends State<Lobby> {
       rooms.add(newRoom);
     });
   }
-
-
 
   _updateRoomData(data){
     List<Room> initRooms = [];
@@ -247,9 +249,10 @@ class _roomModalState extends State<roomModal> {
 
   TextEditingController _roomNameController = TextEditingController();
   TextEditingController _pwController = TextEditingController();
+  final provider = getIt.get<UserID>();
 
   bool _lock = true;
-  String? gameTitle = '노래';
+  String? gameTitle = "인물";
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +318,7 @@ class _roomModalState extends State<roomModal> {
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
-            makeRoom(_roomNameController.text, gameTitle, _lock);
+            makeRoom(_roomNameController.text, gameTitle, _lock, provider.myName, provider.myImage);
             print("방만들기");
             Navigator.push(context, 
               MaterialPageRoute(builder: (BuildContext context) => InGame(gameTitle: _roomNameController.text)));

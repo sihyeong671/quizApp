@@ -89,18 +89,18 @@ class _LogInState extends State<LogIn> {
                                           var image = kakaoUser.properties!['thumbnail_image'];
                                           // var res;
 
-                                          try{
-                                            final res = await http.get(Uri.parse('http://10.0.2.2:8080/user/${userID}'));
-                                            final jsonData = jsonDecode(res.body);
-                                            provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
-                                          } catch(e){
-                                            final res = await http.post(Uri.parse('http://10.0.2.2:8080/user/save'),
-                                              headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                                              body: {"userID": userID, "nickName": name, "img": image});
-                                            final jsonData = jsonDecode(res.body);
-                                            provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
-                                          }
-                                          
+                                        try{
+                                          final res = await http.get(Uri.parse('http://192.249.18.158:80/user/${userID}'));
+                                          final jsonData = jsonDecode(res.body);
+                                          provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
+                                        } catch(e){
+                                          final res = await http.post(Uri.parse('http://192.249.18.158:80/user/save'),
+                                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                            body: {"userID": userID, "nickName": name, "img": image});
+                                          final jsonData = jsonDecode(res.body);
+                                          provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
+                                        }
+                                        
 
                                           
                                           
