@@ -12,8 +12,8 @@ class Ranking extends StatefulWidget {
 }
 
 class _RankingState extends State<Ranking> {
-  late var jsonData = [];
-  late var jsonDataFromFour = jsonData;
+  late List<dynamic> jsonData;
+  late List<dynamic> jsonDataFromFour;
 
   fetchRanking() async {
     try{
@@ -30,8 +30,8 @@ class _RankingState extends State<Ranking> {
 
   @override
   void initState() {
-    super.initState();
     fetchRanking();
+    super.initState();
   }
   
   @override

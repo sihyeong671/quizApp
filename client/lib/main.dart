@@ -6,15 +6,14 @@ import 'package:kakao_flutter_sdk/link.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:client/auth/login.dart';
-// import 'com.kakao.sdk.common.util.Utility';
+import 'package:flutter_kakao_login/flutter_kakao_login.dart';
 
 
 GetIt getIt = GetIt.instance;
 
-void main() {
+void main() async {
   getIt.registerSingleton<UserID>(UserID());
-  // var keyHash = Utility.getKeyHash(this);
-  
+
   KakaoContext.clientId = "b6b6f5078bcc8d1e50be1b189a5ce58c";
   runApp(MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => UserID())],

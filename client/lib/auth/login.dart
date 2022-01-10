@@ -6,6 +6,7 @@ import 'package:client/myPage/myPage.dart';
 import 'package:client/provider/userID.dart';
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
+import 'package:flutter_kakao_login/flutter_kakao_login.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -87,11 +88,18 @@ class _LogInState extends State<LogIn> {
                                           var userID = kakaoUser.id.toString();
                                           var name = kakaoUser.properties!['nickname'].toString();
                                           var image = kakaoUser.properties!['thumbnail_image'];
-                                          print("$userID, $name, $image");
+                                          print("$kakaoUser");
+                                          print(image.runtimeType);
+                                          if (image == null){
+                                            print("testtest");
+                                            image = "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_640x640.jpg";
+                                          }
+                                          
+                                          print("image: ${image}");
                                           
 
                                           var res = await http.get(Uri.parse('http://192.249.18.158:80/user/${userID}'));
-
+                                          print("get한거: ${res.body}");
                                           if (jsonDecode(res.body).length == 0) {
                                             res = await http.post(Uri.parse('http://192.249.18.158:80/user/save'),
                                               headers: {'Content-Type': 'application/x-www-form-urlencoded'},

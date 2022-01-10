@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:client/inGame/ChatMessage.dart';
 import 'package:client/inGame/chat_input_field.dart';
 import 'package:client/inGame/message.dart';
