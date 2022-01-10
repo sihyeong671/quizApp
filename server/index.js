@@ -167,13 +167,18 @@ io.on('connection', (socket) => {
     socket.leave(roomName);
     rooms.get(roomName).currentNum--;
     
-    detailRooms.get(roomName).person.filter(e => {
-      if(e[0] !== socket.id){
+    detailRooms.get(roomName).person = detailRooms.get(roomName).person.filter(e => {
+      console.log(e[0], socket.id);
+      if(e[0] === socket.id){
         return false;
       }
       return true;
     })
-    
+
+    console.log(detailRooms.get(roomName).person);
+    console.log(detailRooms.get(roomName).person.length);
+
+
     if(detailRooms.get(roomName).person.length == 0){
       detailRooms.delete(roomName);
       rooms.delete(roomName);
@@ -186,11 +191,11 @@ io.on('connection', (socket) => {
 
 
   })
-
   // 게임 준비
   socket.on("ready", (name, roomName) => {
     
     let isReady;
+    console.log(detailRooms.get(roomName));
     detailRooms.get(roomName).person.forEach((v)=>{
       if(socket.id === v[0]){
          // Toggle
