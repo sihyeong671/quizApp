@@ -203,21 +203,29 @@ io.on('connection', (socket) => {
   socket.on('round-start', (roomName)=>{
     // db
     // 문제 보내기
+
+    setTimeout(()=>{
+      console.log("round-over");
+      socket.emit('round-over');
+      clearInterval(Timercheck);
+    }, 10001);
+
+    setInterval(()=>{
+      Timercheck
+    }, 1000)
+    
     detailRooms.get(roomName).answer = "신과함께";
     socket.to(roomName).emit('quiz-content', ({
       quiz: 'ㅅㄱㅎㄲ',
       answer: '신과함께'
     }));
-    setTimeout(()=>{
-      console.log("round-over");
-      socket.emit('round-over')},
-      10000);
-      
-    setInterval(()=>{
-      socket.emit('run-timer')
-    }, 1000)
+
+    
   })
 
+  socket.on('game-over', (roomName)=>{
+
+  })
 
 
   // 메시지 보내기
@@ -256,6 +264,10 @@ io.on('connection', (socket) => {
 
 })
 
+
+const Timercheck = ()=>{
+  socket.emit('run-timer')
+}
 
 httpServer.listen(PORT, (err) => {
   console.log(`Listening on port ${PORT}`)

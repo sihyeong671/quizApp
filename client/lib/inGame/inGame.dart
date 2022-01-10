@@ -65,12 +65,12 @@ class _InGameState extends State<InGame> {
   String problem = '';
   String answer = ''; 
   int gameScore = 0;
+  int limitTime = 10;
   @override
   void initState() {
     super.initState();
     _initSocketListener();
   }
-
 
   _initSocketListener(){
     setDetailRoomData(_setRoomData); // 처음에 데이터 받기
@@ -80,6 +80,7 @@ class _InGameState extends State<InGame> {
     quizContent(_showQuizData);
     roundOver(_roundOver);
     correctAnswer(_giveScore);
+    runTimer(_runTimerChange);
     // 라운드 progress
     // 게임종료
   }
@@ -106,7 +107,7 @@ class _InGameState extends State<InGame> {
                   ),
                   isGameStart ? Row(
                     children: [
-                      Text("타이머 숫자")
+                      Text(limitTime.toString())
                     ],
                   ): SizedBox(height:30),
                   Row(
@@ -251,9 +252,14 @@ class _InGameState extends State<InGame> {
     setState(() {
       gameRound++;
     });
+    if(gameRound < 5) roundStart(widget.gameTitle);
+    else{
+      // 다 쫓아내고 정보 갱신
+      gameOver(widget.gameTitle);
+    } 
     
     // Delay
-    roundStart(widget.gameTitle);
+    
   }
 
   _giveScore(int score){
@@ -263,8 +269,15 @@ class _InGameState extends State<InGame> {
     
   }
 
+  _runTimerChange(){
+    setState(() {
+      limitTime--;
+    });
+  }
+
 
 }
+
 
 class Character extends StatefulWidget {
 

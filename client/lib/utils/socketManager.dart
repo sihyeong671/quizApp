@@ -139,19 +139,21 @@ gameStart(Function gameStart){
 // 타이머 동작
 runTimer(Function runTimer){
   _socket.on('run-timer',(data){
-    runTimer(int.parse(data));
+    runTimer();
   });
 }
 
 // 라운드 시작
 roundStart(roomName){
+  print("라운드 시작");
   _socket.emit('round-start',roomName);
 }
 
 quizContent(Function showQuizData){
   _socket.on('quiz-content', (data){
-    print(data);
-    showQuizData(data.quiz, data.answer);
+    print(data['quiz']);
+    print(data['answer']);
+    showQuizData(data["quiz"], data["answer"]);
   });
 }
 
@@ -162,14 +164,14 @@ roundOver(Function roundOver){
   });
 }
 
-
+// 정답
 correctAnswer(Function giveScore){
   _socket.on('correct-answer', (data){
     giveScore(int.parse(data));
   });
 }
 
-
-// 정답
-
 // 게임 종료
+gameOver(String roomNumber){
+  _socket.emit('game-over', roomNumber);
+}
