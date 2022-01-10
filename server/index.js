@@ -78,13 +78,14 @@ io.on('connection', (socket) => {
         gameTitle: roomName,
         gameType: gameType,
         gameStart: false,
-        gameRound: 0,
+        gameRound: 1,
         readyNum: 0,
         gameTime: timeLimit,
         person: [
         //socket, nickname, score, img
           [socket.id, name, 0, img]
         ],
+        answer: ''
         // chat은 필요없음
       }
 
@@ -93,7 +94,7 @@ io.on('connection', (socket) => {
         rooms.set(roomName, roomData);
         detailRooms.set(roomName, detailRoomData);
         console.log(`${socket.id}님이 ${roomName}을 만들었습니다`);
-        socket.broadcast.emit('update-room', Object.fromEntries(rooms));
+        // socket.broadcast.emit('update-room', Object.fromEntries(rooms));
         // 클라이언트에서 페이지 전환
       }
       else{
@@ -118,9 +119,11 @@ io.on('connection', (socket) => {
       socket.to(data.roomName).emit("get-detail-room", detailRooms.get(roomName));
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
 
-      if(rooms.get(data.roomName).currentNum == 6){
+      if(rooms.get(data.roomName).currentNum == 2){
         console.log("게임을 시작합니다")
-        socket.broadcast.to(data.roomName).emit('game-progress');
+        rooms.get(data.roomName).isGameStart = true;
+        detailRooms.get(data.roomName).gameStart = true;
+        socket.broadcast.to(data.roomName).emit('game-start');
       }
     }
     else{
@@ -151,9 +154,11 @@ io.on('connection', (socket) => {
       socket.to(key).emit('get-detail-room',detailRooms.get(key));
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
 
-      if(rooms.get(key).currentNum == 6){
+      if(rooms.get(key).currentNum == 2){
         console.log("게임을 시작합니다")
-        socket.broadcast.to(data.roomName).emit('game-progress');
+        rooms.get(key).isGameStart = true;
+        detailRooms.get(key).gameStart = true;
+        socket.to(key).emit('game-start');
       }
     }
     else{
@@ -190,13 +195,20 @@ io.on('connection', (socket) => {
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
     }else{
       socket.to(roomName).emit('get-detail-room', detailRooms.get(roomName));
-    }
-
-    
-
+    }    
 
   })
 
+  // 게임 시작
+  socket.on('round-start', (roomName)=>{
+    // db
+    // 문제 보내기
+    detailRooms.get(roomName).answer = "신과함께";
+    socket.to(roomName).emit('quiz-content', ({
+      quiz: 'ㅅㄱㅎㄲ',
+      answer: '신과함께'
+    }));
+  })
 
   // 메시지 보내기
 
@@ -205,6 +217,26 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send-message', (data) => {
+    
+    const myRoom = detailRooms.get(data.gameTitle)
+    if(myRoom.gameStart){ // 게임중
+      if(data.message === myRoom.answer){
+        myRoom.gameRound++;
+        
+        socket.emit('correct-answer'); // 정답
+        
+        if(myRoom.gameRound > 5){
+
+          socket.to(data.gameTitle).emit('game-over'); // 만들어줘야함
+          socket.to(data.gameTitle).emit('update-room');
+        }else{
+          socket.to(data.gameTitle).emit('round-over'); // 라운드 끝
+          socket.to(data.gameTitle).emit('get-detail-room');
+        }
+        
+      }
+    }
+
     socket.to(data.gameTitle).emit("receive-message", data.message); // 룸 내의 모든 참가자에게 메시지 전송
   })
 

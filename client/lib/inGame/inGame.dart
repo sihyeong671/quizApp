@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:client/inGame/ChatMessage.dart';
 import 'package:client/inGame/chat_input_field.dart';
 import 'package:client/inGame/message.dart';
@@ -22,15 +24,47 @@ class _InGameState extends State<InGame> {
 
   final provider = getIt.get<UserID>();
 
-  bool gameStart = false;
-  late int gameRound;
+  bool isGameStart = false;
+  int gameRound = 0;
   late String gameType;
   List<Character> showUsers = [
-
+    Character(
+      id: '/',
+      name: '',
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+    ),
+    Character(
+      id: '/',
+      name: '',
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+    ),
+    Character(
+      id: '/',
+      name: '',
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+    ),
+    Character(
+      id: '/',
+      name: '',
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+    ),
+    Character(
+      id: '/',
+      name: '',
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+    ),
+    Character(
+      id: '/',
+      name: '',
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+    ),
   ];
   List<ChatMessage> chat = [];
   final ScrollController _scrollController = ScrollController();
 
+  String problem = '';
+  String answer = ''; 
+  int gameScore = 0;
   @override
   void initState() {
     super.initState();
@@ -42,6 +76,12 @@ class _InGameState extends State<InGame> {
     setDetailRoomData(_setRoomData); // 처음에 데이터 받기
     requestDetailRoomData(widget.gameTitle); // 데이터 요청
     broadCastMessage(_showMessage);
+    gameStart(_gameStart);
+    quizContent(_showQuizData);
+    roundOver(_roundOver);
+    correctAnswer(_giveScore);
+    // 라운드 progress
+    // 게임종료
   }
   
   @override
@@ -61,11 +101,19 @@ class _InGameState extends State<InGame> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  SizedBox(
+                    height: 30.0,
+                  ),
+                  isGameStart ? Row(
+                    children: [
+                      Text("타이머 숫자")
+                    ],
+                  ): SizedBox(height:30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        child: Text("망고"),
+                        child: Text("${gameRound}"),
                       )
                     ],
                   ),
@@ -82,7 +130,7 @@ class _InGameState extends State<InGame> {
                         ],
                       ),
                       Expanded( 
-                        child: gameStart ? PhotoQuiz() : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle)
+                        child: isGameStart ? PhotoQuiz() : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle)
                       ),
                       Column(
                         children: <Widget>[
@@ -113,8 +161,20 @@ class _InGameState extends State<InGame> {
     );
   }
 
-  
+  _gameStart(){
+    if(mounted){
+      setState(() {
+        isGameStart = true;
+      });
+    }
+    roundStart(widget.gameTitle);
+  }
 
+  _showQuizData(String problem, String answer){
+    this.problem = problem;
+    this.answer = answer;
+  }
+  
   _showMessage(String msg){
     print(msg);
     if(mounted){
@@ -152,12 +212,12 @@ class _InGameState extends State<InGame> {
         v.forEach((vv){
           if(mounted){
             setState((){
-            showUsers.add(new Character(
-                  id: vv[0],
-                  name: vv[1],
-                  score: vv[2],
-                  img: vv[3],
-                ));
+              showUsers.add(new Character(
+                id: vv[0],
+                name: vv[1],
+                score: gameScore,
+                img: vv[3],
+              ));
             });
           }
           
@@ -186,7 +246,25 @@ class _InGameState extends State<InGame> {
     
   }
 
-  
+  _roundOver(){
+    print("지연1");
+    Future.delayed(Duration(milliseconds: 1000));
+    print("지연2");
+    setState(() {
+      
+    });
+    gameRound++;
+    // Delay
+    roundStart(widget.gameTitle);
+  }
+
+  _giveScore(int score){
+    setState(() {
+      gameScore += 5;
+    });
+    
+  }
+
 }
 
 class Character extends StatefulWidget {
