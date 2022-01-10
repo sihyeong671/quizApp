@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:core';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -52,8 +53,6 @@ joinRoom(data){
 }
 
 
-
-
 // on(send)
 roomExistenceCheck(Function floatToastMessage){
 
@@ -94,17 +93,7 @@ requestDetailRoomData(String? title){
 }
 
 // 준비하기
-readyForGame(name, title){
-  _socket.emit('ready', {
-    "name": name,
-    "gameTitle": title
-  });
-}
 
-//시작하기
-startForGame(name, title){
-  _socket.emit('game-start', title);
-}
 
 // 나가기
 leaveRoom(roomName){
@@ -113,8 +102,7 @@ leaveRoom(roomName){
 
 setDetailRoomData(Function setRoomData){
   _socket.on('get-detail-room', (data){
-    print("get-detail-room : ");
-    print(data);
+    print("get-detail-room ");
     setRoomData(data);
   });
 }
@@ -137,3 +125,49 @@ broadCastMessage(Function showMessage){
     showMessage(data);
   });
 }
+
+// 게임 로직
+
+// 게임 시작
+gameStart(Function gameStart){
+  _socket.on('game-start',(data){
+    print("게임시작");
+    gameStart();
+  });
+}
+
+// 타이머 동작
+runTimer(){
+  _socket.on('run-timer',(data){
+  });
+}
+
+// 라운드 시작
+roundStart(roomName){
+  _socket.emit('round-start',roomName);
+}
+
+quizContent(Function showQuizData){
+  _socket.on('quiz-content', (data){
+    print(data);
+    showQuizData(data.quiz, data.answer);
+  });
+}
+
+// 라운드 종료
+roundOver(Function roundOver){
+  _socket.on('round-over',(data){
+    roundOver();
+  });
+}
+
+correctAnswer(Function giveScore){
+  _socket.on('correct-answer', (data){
+    giveScore(int.parse(data));
+  });
+}
+
+
+// 정답
+
+// 게임 종료
