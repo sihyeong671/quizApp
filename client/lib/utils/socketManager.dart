@@ -170,6 +170,10 @@ correctAnswer(Function giveScore){
 }
 
 
+disconnectSocket() {
+  _socket.disconnect();
+}
+
 // 정답
 
 // 게임 종료

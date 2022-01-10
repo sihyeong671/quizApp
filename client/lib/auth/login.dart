@@ -88,14 +88,10 @@ class _LogInState extends State<LogIn> {
                                           var userID = kakaoUser.id.toString();
                                           var name = kakaoUser.properties!['nickname'].toString();
                                           var image = kakaoUser.properties!['thumbnail_image'];
-                                          print("$kakaoUser");
-                                          print(image.runtimeType);
                                           if (image == null){
-                                            print("testtest");
+                                            print("default profile image!");
                                             image = "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_640x640.jpg";
                                           }
-                                          
-                                          print("image: ${image}");
                                           
 
                                           var res = await http.get(Uri.parse('http://192.249.18.158:80/user/${userID}'));
@@ -104,11 +100,12 @@ class _LogInState extends State<LogIn> {
                                             res = await http.post(Uri.parse('http://192.249.18.158:80/user/save'),
                                               headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                                               body: {"userID": userID, "nickName": name, "img": image});
-                                            print("post된거: $res");
+                                            print("post된거: ${res.body}");
                                           }
                                           final jsonData = jsonDecode(res.body);
-                                          provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
-
+                                          jsonData.length == 1
+                                            ? provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false) 
+                                            : provider.add(jsonData['userID'], jsonData['nickName'], jsonData['img'], jsonData['score'], false);
                                           Navigator.push(context, 
                                             MaterialPageRoute(builder: (BuildContext context) => Lobby()));
                                         } catch (e) {

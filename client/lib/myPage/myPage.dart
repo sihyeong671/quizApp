@@ -11,6 +11,7 @@ import 'package:client/main.dart';
 
 import 'dart:convert';
 import 'package:provider/provider.dart';
+import 'package:client/utils/socketManager.dart';
 
 
 
@@ -173,6 +174,8 @@ void WidthrawalDialog(BuildContext context, provider,) {
                   var res = await http.delete(Uri.parse('http://192.249.18.158:80/user/${provider.myID}'));
                   print('delete: ${provider.myID}');
                   var code = UserApi.instance.unlink();
+                  disconnectSocket();
+
                 Navigator.pop(context);
                 Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (BuildContext context) => LogIn()));
