@@ -177,7 +177,8 @@ io.on('connection', (socket) => {
     rooms.get(roomName).currentNum--;
     
     detailRooms.get(roomName).person = detailRooms.get(roomName).person.filter(e => {
-      if(e[0] !== socket.id){
+      console.log(e[0], socket.id);
+      if(e[0] === socket.id){
         return false;
       }
       return true;
