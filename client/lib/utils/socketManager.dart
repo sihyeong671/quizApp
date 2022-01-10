@@ -8,7 +8,7 @@ late final IO.Socket _socket;
 
 // 소켓 설정
 initSocket() async{
-  _socket = IO.io('http://10.0.2.2:8080',
+  _socket = IO.io('http://192.249.18.158:80',
     IO.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()

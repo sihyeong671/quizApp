@@ -248,7 +248,7 @@ class _roomModalState extends State<roomModal> {
   final provider = getIt.get<UserID>();
 
   bool _lock = true;
-  String? gameTitle;
+  String? gameTitle = "인물";
 
   @override
   Widget build(BuildContext context) {

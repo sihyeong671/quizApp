@@ -11,8 +11,8 @@ import 'package:client/main.dart';
 import 'package:client/provider/userID.dart';
 
 class InGame extends StatefulWidget {
-  final String? gameTitle;
-  const InGame({ Key? key, @required this.gameTitle}) : super(key: key);
+  final String gameTitle;
+  const InGame({ Key? key, required this.gameTitle}) : super(key: key);
 
   @override
   _InGameState createState() => _InGameState();
@@ -23,10 +23,12 @@ class _InGameState extends State<InGame> {
   final provider = getIt.get<UserID>();
 
   bool gameStart = false;
-  int gameRound = 1;
+  late int gameRound;
   late String gameType;
-  List<String> users = [];
-  List<Character> showUsers = [];
+  late bool myIsHost = false;
+  List<Character> showUsers = [
+
+  ];
   List<ChatMessage> chat = [];
   final ScrollController _scrollController = ScrollController();
 
@@ -34,6 +36,12 @@ class _InGameState extends State<InGame> {
   void initState() {
     super.initState();
     _initSocketListener();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    leaveRoom(widget.gameTitle);
   }
 
   _initSocketListener(){
@@ -79,8 +87,8 @@ class _InGameState extends State<InGame> {
                           showUsers[2]
                         ],
                       ),
-                      Expanded(
-                        child: gameStart ? PhotoQuiz() : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle)
+                      Expanded( 
+                        child: gameStart ? PhotoQuiz() : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle, isHost: myIsHost,)
                       ),
                       Column(
                         children: <Widget>[
@@ -138,47 +146,44 @@ class _InGameState extends State<InGame> {
   }
 
   _setRoomData(data){
-    List<List<dynamic>> tempList = [[]];
-    var tempVal;
+    showUsers.clear();
     data.forEach((v, k){
-      if(k == 'gameType') tempVal = v;
+      if(k == 'gameType') gameType = v;
+      else if(k == 'gameRound') gameRound = v;
       else if(k == 'person'){
         v.forEach((vv){
-          tempList.add([vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]]);
+
+          if(vv[1] == provider.myName){
+            myIsHost = vv[2];
+          }
+
+          showUsers.add(new Character(
+            id: vv[0],
+            name: vv[1],
+            isHost: vv[2],
+            isReady: vv[3],
+            score: vv[4],
+            img: vv[5],
+          ));
         });
+      }
+
+      while (showUsers.length < 6) {
+        showUsers.add(new Character(
+          id: '/',
+          name: '',
+          img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+        ));
       }
     });
 
-    List<Character> charList = [];
+    setState((){
 
-    for(int i = 0; i < tempList.length; ++i){
-      charList.add(new Character(
-        id: tempList[i][0],
-        name: tempList[i][1],
-        isHost: tempList[i][2],
-        isReady: tempList[i][3],
-        score: tempList[i][4],
-        img: tempList[i][5],
-        ));
-    }
-
-    for(int i = tempList.length; i < 6; ++i){
-      charList.add(new Character(
-        // id: ,
-        name: "",
-        // isHost: tempList[i][2],
-        // isReady: tempList[i][3],
-        // score: tempList[i][4],
-        // img: tempList[i][5],
-      )); // 게스트 이미지는 뭘로 해야하지?
-    }
-
-    setState(() {
-      gameType = tempVal;
-      users = List.from(tempList);
     });
     
   }
+
+  
 }
 
 class Character extends StatefulWidget {
@@ -196,7 +201,7 @@ class Character extends StatefulWidget {
 
   final String? name;
   final String? img;
-  final int? id;
+  final String? id;
   final bool? isHost;
   final bool? isReady;
   final int? score;
@@ -212,7 +217,7 @@ class _CharacterState extends State<Character> {
   @override
   Widget build(BuildContext context){
 
-    if(widget.id == null){
+    if(widget.id == '/'){
       isEmpty = true;
     }
     else{
@@ -225,20 +230,20 @@ class _CharacterState extends State<Character> {
         SizedBox(
           width: 10.0,
         ),
-        isEmpty? CircleAvatar(
+        isEmpty ? CircleAvatar(
+          radius: 15,
+          backgroundImage: NetworkImage(widget.img!),
+        ) : CircleAvatar(
           radius: 15,
           backgroundColor: (widget.isReady!) ? Colors.green : Colors.red,
           child: CircleAvatar(
             radius: 13,
             backgroundImage: NetworkImage(widget.img!),
           ),
-        ):CircleAvatar(
-          radius: 15,
-          backgroundColor: Colors.black,
         ),
         SizedBox(
           width: 10.0,
-        ),
+        )
       ],
     );
   }
@@ -265,37 +270,37 @@ class PhotoQuiz extends StatelessWidget {
 
 class BeforeGame extends StatelessWidget {
   
-  final String? gameTitle;
-  final String? name;
-  final bool? isHost;
+  final String gameTitle;
+  final String name;
+  final bool isHost;
   const BeforeGame({
     Key? key,
-    @required this.name ,
-    @required this.gameTitle,
-    @required this.isHost
+    required this.name,
+    required this.gameTitle,
+    required this.isHost
     }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        isHost! ? ElevatedButton(
+        !isHost ? ElevatedButton(
           onPressed: (){
             // Host는 게임 시작
-            startForGame(name!, gameTitle!);
+            startForGame(name, gameTitle);
           },
           child: Text("게임 시작") 
         ) : ElevatedButton(
           onPressed: (){
             // Host는 게임 시작
-            readyForGame(name!, gameTitle!);
+            readyForGame(name, gameTitle);
           },
           child: Text("게임 준비") 
         ),
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
-            // splice하고 기본 넣기
+            // 
             leaveRoom(gameTitle);
           },
           child: Text("나가기")
