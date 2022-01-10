@@ -180,7 +180,7 @@ io.on('connection', (socket) => {
   socket.on("leave-room", (roomName) => {
     console.log(`${socket.id}님이 ${roomName}을 나갔습니다`)
     socket.leave(roomName);
-    rooms.get(roomName).currentNum--;
+    rooms.has(roomName) && (rooms.get(roomName).currentNum -= 1);
     
     detailRooms.get(roomName).person = detailRooms.get(roomName).person.filter(e => {
       console.log(e[0], socket.id);
