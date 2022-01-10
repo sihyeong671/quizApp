@@ -192,31 +192,33 @@ io.on('connection', (socket) => {
 
   })
   // 게임 준비
-  socket.on("ready", (name, roomName) => {
+  socket.on("ready", (data) => {
     
     let isReady;
-    console.log(detailRooms.get(roomName));
-    detailRooms.get(roomName).person.forEach((v)=>{
+    console.log(detailRooms.get(data.gameTitle));
+
+
+    detailRooms.get(data.gameTitle).person.forEach((v)=>{
       if(socket.id === v[0]){
          // Toggle
         if(!v[3]){ // 준비안함 -> 준비
           v.readyNum++;
           isReady = true;
-          console.log(`${name}님이 준비하였습니다`)
+          console.log(`${data.name}님이 준비하였습니다`)
         }
         else{ // 준비 -> 준비안함
           v.readyNum--;
           isReady = false;
-          console.log(`${name}님이 준비해제하였습니다`)
+          console.log(`${data.name}님이 준비해제하였습니다`)
         }
         v[3] = !v[3];
       }
     })
 
-    if(isReady) detailRooms.get(roomName).readyNum += 1;
-    else  detailRooms.get(roomName).readyNum -= 1;
+    if(isReady) detailRooms.get(data.gameTitle).readyNum += 1;
+    else  detailRooms.get(data.gameTitle).readyNum -= 1;
 
-    socket.to(roomName).emit('get-detail-room', detailRooms.get(roomName));
+    socket.to(data.gameTitle).emit('get-detail-room', detailRooms.get(data.gameTitle));
   })
 
   // 게임 시작
