@@ -121,7 +121,11 @@ class _LobbyState extends State<Lobby> {
                                   TextButton(
                                     child: Text('참가하기'),
                                     onPressed: () {
-                                      joinRoom(rooms[index].gameTitle);
+                                      joinRoom({
+                                        "roomName": rooms[index].gameTitle,
+                                        "name": provider.myName,
+                                        "img": provider.myImage
+                                      });
                                       Navigator.push(context, 
                                         MaterialPageRoute(builder: (BuildContext context) => InGame(gameTitle: rooms[index].gameTitle)));
                                     },

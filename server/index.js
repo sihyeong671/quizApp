@@ -82,12 +82,11 @@ io.on('connection', (socket) => {
         readyNum: 0,
         gameTime: timeLimit,
         person: [
-        //socket, nickname, isHost, isReady, score, img
-          [socket.id, name, true, false, 0, img]
+        //socket, nickname, score, img
+          [socket.id, name, 0, img]
         ],
         // chat은 필요없음
       }
-
 
       if(!check){
         socket.join(roomName);
@@ -110,13 +109,13 @@ io.on('connection', (socket) => {
   })
 
   // 참가하기
-  socket.on('join-room', (roomName) => {
-    console.log(`${socket.id}가 ${roomName}에 참가했습니다`)
+  socket.on('join-room', (data) => {
+    console.log(`${socket.id}가 ${data.roomName}에 참가했습니다`)
     socket.join(roomName);
-    if(rooms.get(roomName).currentNum < 6){
-      rooms.get(roomName).currentNum++;
-      detailRooms.get(roomName).person.push([socket.id]);
-      socket.to(roomName).emit("get-detail-room", detailRooms.get(roomName));
+    if(rooms.get(data.roomName).currentNum < 6){
+      rooms.get(data.roomName).currentNum++;
+      detailRooms.get(data.roomName).person.push([socket.id, data.name, 0, data.img]);
+      socket.to(data.roomName).emit("get-detail-room", detailRooms.get(roomName));
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
     }
     else{
@@ -167,7 +166,7 @@ io.on('connection', (socket) => {
     socket.leave(roomName);
     rooms.get(roomName).currentNum--;
     
-    detailRooms.get(roomName).person.filter(e => {
+    detailRooms.get(roomName).person = detailRooms.get(roomName).person.filter(e => {
       if(e[0] !== socket.id){
         return false;
       }
@@ -187,49 +186,8 @@ io.on('connection', (socket) => {
 
   })
 
-  // 게임 준비
-  socket.on("ready", (name, roomName) => {
-    
-    let isReady;
-    detailRooms.get(roomName).person.forEach((v)=>{
-      if(socket.id === v[0]){
-         // Toggle
-        if(!v[3]){ // 준비안함 -> 준비
-          v.readyNum++;
-          isReady = true;
-          console.log(`${name}님이 준비하였습니다`)
-        }
-        else{ // 준비 -> 준비안함
-          v.readyNum--;
-          isReady = false;
-          console.log(`${name}님이 준비해제하였습니다`)
-        }
-        v[3] = !v[3];
-      }
-    })
-
-    if(isReady) detailRooms.get(roomName).readyNum += 1;
-    else  detailRooms.get(roomName).readyNum -= 1;
-
-    socket.to(roomName).emit('get-detail-room', detailRooms.get(roomName));
-  })
-
   // 게임 시작
   socket.on('game-start', (roomName) => {
-    const length = detailRooms.get(roomName).person.length
-    if((length - 1 == detailRooms.get(roomName).readyNum) && (length > 1)){
-      console.log('게임을 시작합니다');
-      rooms.get(roomName).isGameStart = true;
-      detailRooms.get(roomName).gameStart = true;
-      detailRooms.get(roomName).gameRound++;
-      // 로직 추가
-      socket.emit('game-starting');
-      // 브로드 캐스트 전체 room
-      // 브로드 캐스트 방 detailroom
-      
-    }else{
-      console.log("누군가 준비를 하지 않았거나 혼자입니다")
-    }
   })
 
   // 메시지 보내기

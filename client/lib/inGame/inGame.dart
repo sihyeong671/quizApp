@@ -25,7 +25,6 @@ class _InGameState extends State<InGame> {
   bool gameStart = false;
   late int gameRound;
   late String gameType;
-  late bool myIsHost = false;
   List<Character> showUsers = [
 
   ];
@@ -38,11 +37,6 @@ class _InGameState extends State<InGame> {
     _initSocketListener();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    leaveRoom(widget.gameTitle);
-  }
 
   _initSocketListener(){
     setDetailRoomData(_setRoomData); // 처음에 데이터 받기
@@ -88,7 +82,7 @@ class _InGameState extends State<InGame> {
                         ],
                       ),
                       Expanded( 
-                        child: gameStart ? PhotoQuiz() : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle, isHost: myIsHost,)
+                        child: gameStart ? PhotoQuiz() : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle)
                       ),
                       Column(
                         children: <Widget>[
@@ -147,39 +141,40 @@ class _InGameState extends State<InGame> {
 
   _setRoomData(data){
     showUsers.clear();
+    print(data);
     data.forEach((v, k){
       if(k == 'gameType') gameType = v;
       else if(k == 'gameRound') gameRound = v;
       else if(k == 'person'){
         v.forEach((vv){
-
-          if(vv[1] == provider.myName){
-            myIsHost = vv[2];
-          }
-
-          showUsers.add(new Character(
-            id: vv[0],
-            name: vv[1],
-            isHost: vv[2],
-            isReady: vv[3],
-            score: vv[4],
-            img: vv[5],
-          ));
+            
+          setState((){
+            showUsers.add(new Character(
+                  id: vv[0],
+                  name: vv[1],
+                  score: vv[4],
+                  img: vv[5],
+                ));
+            });
+          
         });
       }
 
       while (showUsers.length < 6) {
-        showUsers.add(new Character(
+        setState(() {
+          showUsers.add(new Character(
           id: '/',
           name: '',
           img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
         ));
+        });
       }
     });
 
-    setState((){
-
-    });
+    if(mounted){
+      
+    }
+    
     
   }
 
@@ -188,13 +183,10 @@ class _InGameState extends State<InGame> {
 
 class Character extends StatefulWidget {
 
-
   const Character({
     Key? key,
     this.id,
     this.name,
-    this.isHost,
-    this.isReady,
     this.score,
     this.img,
   }) : super(key: key);
@@ -202,8 +194,6 @@ class Character extends StatefulWidget {
   final String? name;
   final String? img;
   final String? id;
-  final bool? isHost;
-  final bool? isReady;
   final int? score;
 
   @override
@@ -235,7 +225,7 @@ class _CharacterState extends State<Character> {
           backgroundImage: NetworkImage(widget.img!),
         ) : CircleAvatar(
           radius: 15,
-          backgroundColor: (widget.isReady!) ? Colors.green : Colors.red,
+          backgroundColor: Colors.green,
           child: CircleAvatar(
             radius: 13,
             backgroundImage: NetworkImage(widget.img!),
@@ -268,44 +258,37 @@ class PhotoQuiz extends StatelessWidget {
 }
 
 
-class BeforeGame extends StatelessWidget {
+class BeforeGame extends StatefulWidget {
   
   final String gameTitle;
   final String name;
-  final bool isHost;
   const BeforeGame({
     Key? key,
     required this.name,
     required this.gameTitle,
-    required this.isHost
     }) : super(key: key);
+
+  @override
+  State<BeforeGame> createState() => _BeforeGameState();
+}
+
+class _BeforeGameState extends State<BeforeGame> {
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        !isHost ? ElevatedButton(
-          onPressed: (){
-            // Host는 게임 시작
-            startForGame(name, gameTitle);
-          },
-          child: Text("게임 시작") 
-        ) : ElevatedButton(
-          onPressed: (){
-            // Host는 게임 시작
-            readyForGame(name, gameTitle);
-          },
-          child: Text("게임 준비") 
-        ),
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
             // 
-            leaveRoom(gameTitle);
+            leaveRoom(widget.gameTitle);
           },
           child: Text("나가기")
         )
       ],
     );
   }
+  
+  
 }
