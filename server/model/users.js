@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
     },
     score:{
         type: Number,
-        // default: 0
+        default: 0
     },
     createdDay: {
         type: Date,
