@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
       socket.to(data.roomName).emit("get-detail-room", detailRooms.get(data.roomName));
       socket.broadcast.emit('update-room', Object.fromEntries(rooms));
 
-      if(rooms.get(data.roomName).currentNum == 6){
+      if(rooms.get(data.roomName).currentNum == 2){
         console.log("게임을 시작합니다")
         socket.broadcast.to(data.roomName).emit('game-progress');
       }
