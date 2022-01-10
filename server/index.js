@@ -130,8 +130,6 @@ io.on('connection', (socket) => {
     else{
       socket.emit('fail-join', '인원이 다 찼습니다');
     }
-
-    
     
   })
 
@@ -210,6 +208,10 @@ io.on('connection', (socket) => {
       quiz: 'ㅅㄱㅎㄲ',
       answer: '신과함께'
     }));
+    setTimeout(()=>{
+      console.log("round-over");
+      socket.emit('round-over')},
+      10000);
   })
 
   // 메시지 보내기

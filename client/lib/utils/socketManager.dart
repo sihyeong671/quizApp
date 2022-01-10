@@ -137,8 +137,9 @@ gameStart(Function gameStart){
 }
 
 // 타이머 동작
-runTimer(){
+runTimer(Function runTimer){
   _socket.on('run-timer',(data){
+    runTimer(int.parse(data));
   });
 }
 
@@ -160,6 +161,7 @@ roundOver(Function roundOver){
     roundOver();
   });
 }
+
 
 correctAnswer(Function giveScore){
   _socket.on('correct-answer', (data){

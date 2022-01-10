@@ -130,7 +130,7 @@ class _InGameState extends State<InGame> {
                         ],
                       ),
                       Expanded( 
-                        child: isGameStart ? PhotoQuiz() : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle)
+                        child: isGameStart ? PhotoQuiz(answer: answer) : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle)
                       ),
                       Column(
                         children: <Widget>[
@@ -263,6 +263,7 @@ class _InGameState extends State<InGame> {
     
   }
 
+
 }
 
 class Character extends StatefulWidget {
@@ -324,18 +325,21 @@ class _CharacterState extends State<Character> {
 }
 
 
-class PhotoQuiz extends StatelessWidget {
-  const PhotoQuiz({ Key? key }) : super(key: key);
+class PhotoQuiz extends StatefulWidget {
+  
+  final String answer;
+  const PhotoQuiz({ Key? key, required this.answer}) : super(key: key);
 
+  @override
+  State<PhotoQuiz> createState() => _PhotoQuizState();
+}
+
+class _PhotoQuizState extends State<PhotoQuiz> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Image.asset(
-          'assets/cutesexy.jpeg', 
-          width: 150.0,
-          height: 150.0,
-        ),
+        Text(widget.answer)
       ],
     );
   }
