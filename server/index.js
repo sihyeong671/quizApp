@@ -212,7 +212,13 @@ io.on('connection', (socket) => {
       console.log("round-over");
       socket.emit('round-over')},
       10000);
+      
+    setInterval(()=>{
+      socket.emit('run-timer')
+    }, 1000)
   })
+
+
 
   // 메시지 보내기
 

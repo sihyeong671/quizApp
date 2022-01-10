@@ -87,20 +87,19 @@ class _LogInState extends State<LogIn> {
                                           var userID = kakaoUser.id.toString();
                                           var name = kakaoUser.properties!['nickname'].toString();
                                           var image = kakaoUser.properties!['thumbnail_image'];
-                                          // var res;
+                                          print("$userID, $name, $image");
+                                          
 
-                                        try{
-                                          final res = await http.get(Uri.parse('http://192.249.18.158:80/user/${userID}'));
+                                          var res = await http.get(Uri.parse('http://192.249.18.158:80/user/${userID}'));
+
+                                          if (jsonDecode(res.body).length == 0) {
+                                            res = await http.post(Uri.parse('http://192.249.18.158:80/user/save'),
+                                              headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                              body: {"userID": userID, "nickName": name, "img": image});
+                                            print("post된거: $res");
+                                          }
                                           final jsonData = jsonDecode(res.body);
                                           provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
-                                        } catch(e){
-                                          final res = await http.post(Uri.parse('http://192.249.18.158:80/user/save'),
-                                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                                            body: {"userID": userID, "nickName": name, "img": image});
-                                          final jsonData = jsonDecode(res.body);
-                                          provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false);
-                                        }
-                                        
 
                                           Navigator.push(context, 
                                             MaterialPageRoute(builder: (BuildContext context) => Lobby()));
@@ -143,15 +142,4 @@ class _LogInState extends State<LogIn> {
     );
   }
 
-}
-
-void showSnackBar(BuildContext context){
-  Scaffold.of(context).showSnackBar(
-    SnackBar(content: 
-      Text('로그인 확인 하세욧',
-      textAlign: TextAlign.center,),
-        duration: Duration(seconds: 2),
-        backgroundColor: Colors.blue,
-    )
-  );
 }

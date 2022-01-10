@@ -4,8 +4,10 @@ import 'package:client/provider/userID.dart';
 import 'package:client/utils/floatingButton.dart';
 import 'package:client/myPage/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/all.dart';
+import 'package:client/main.dart';
 
 import 'dart:convert';
 import 'package:provider/provider.dart';
@@ -75,7 +77,7 @@ class _MyPageState extends State<MyPage> {
                       child: Text("탈퇴하기", style: TextStyle(color: Colors.red),),
                     ),
                   ],
-                  onSelected: (item) => {SelectedItem(context, item)},
+                  onSelected: (item) => {SelectedItem(context, provider, item)},
                 ),
               ),
               Padding(padding: EdgeInsets.only(top: 100.0)),
@@ -115,7 +117,7 @@ class _MyPageState extends State<MyPage> {
   }
 }
 
-void SelectedItem(BuildContext context, item) {
+void SelectedItem(BuildContext context, provider, item) {
   switch (item) {
     case 0:
       print(1);
@@ -126,12 +128,12 @@ void SelectedItem(BuildContext context, item) {
         MaterialPageRoute(builder: (BuildContext context) => LogIn()));
       break;
     case 2:
-      WidthrawalDialog(context);
+      WidthrawalDialog(context, provider);
       break;
   }
 }
 
-void WidthrawalDialog(BuildContext context) {
+void WidthrawalDialog(BuildContext context, provider,) {
     showDialog(
         context: context,
         //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
@@ -167,7 +169,9 @@ void WidthrawalDialog(BuildContext context) {
               ),
               new TextButton(
                 child: new Text("네"),
-                onPressed: () {
+                onPressed: () async {
+                  var res = await http.delete(Uri.parse('http://192.249.18.158:80/user/${provider.myID}'));
+                  print('delete: ${provider.myID}');
                   var code = UserApi.instance.unlink();
                 Navigator.pop(context);
                 Navigator.pushReplacement(context,

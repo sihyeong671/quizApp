@@ -1,9 +1,19 @@
 import 'package:client/auth/login.dart';
+import 'package:client/main.dart';
+import 'package:client/provider/userID.dart';
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/all.dart';
+import 'package:http/http.dart' as http;
 
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
   const Settings({ Key? key }) : super(key: key);
+
+  @override
+  State<Settings> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
+  final provider = getIt.get<UserID>();
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +53,16 @@ class Settings extends StatelessWidget {
               ),
               new TextButton(
                 child: new Text("네"),
-                onPressed: () {
+                onPressed: () async {
+                  print("시발롬아");
+                  print('${provider.myID}');
+                  var res = await http.delete(Uri.parse('http://192.249.18.158:80/user/${provider.myID}'));
+                  print('delete: $res');
+
                   var code = UserApi.instance.unlink();
-                Navigator.pop(context);
-                Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (BuildContext context) => LogIn()));
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (BuildContext context) => LogIn()));
                 },
               ),
             ],
