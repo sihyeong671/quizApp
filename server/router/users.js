@@ -20,8 +20,8 @@ userRouter.get('/:id', async (req, res) =>  {
 
 userRouter.post('/save' , (req, res) => {
     console.log("유저정보저장")
-    const {userID, nickName, img} = req.body;
-    db.add(userID, nickName, img, (newUser) => {
+    const {userID, nickName, img, score} = req.body;
+    db.add(userID, nickName, img, score, (newUser) => {
         res.json(newUser)
     })
 });

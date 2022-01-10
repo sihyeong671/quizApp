@@ -9,7 +9,7 @@ import bodyParser from 'body-parser'
 import { read } from 'fs'
 
 dotenv.config()
-const {PORT} = process.env
+const {PORT, BASE_URL} = process.env
 
 const app = express()
 
@@ -173,6 +173,16 @@ io.on('connection', (socket) => {
       }
       return true;
     })
+    
+    if(detailRooms.get(roomName).person.length == 0){
+      detailRooms.delete(roomName);
+      rooms.delete(roomName);
+      socket.broadcast.emit('update-room', Object.fromEntries(rooms));
+    }else{
+      socket.to(roomName).emit('get-detail-room',detailRooms.get(roomName));
+    }
+
+    
 
 
   })
