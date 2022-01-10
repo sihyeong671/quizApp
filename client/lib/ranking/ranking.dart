@@ -18,12 +18,11 @@ class _RankingState extends State<Ranking> {
 
   fetchRanking() async {
     try{
-      var res = await http.get(Uri.parse("http://10.0.2.2:8080/user/all"));
+      var res = await http.get(Uri.parse("http://192.249.18.158:80/user/all"));
       setState(() {
         jsonData = jsonDecode(res.body);
         jsonData.sort((a, b) => b['score'].compareTo(a['score']));
         jsonDataFromFour = jsonData.sublist(3);
-        print(jsonData);
       });
     } catch(e){
       print(e);
@@ -79,7 +78,7 @@ class _RankingState extends State<Ranking> {
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 50.0)),
+              Padding(padding: EdgeInsets.only(top: 35.0)),
               Image(
                 image: AssetImage('assets/crown.png'),
                 width: 70.0,
@@ -139,6 +138,9 @@ class _RankingState extends State<Ranking> {
                     ],
                   ),
                 ],
+              ),
+              SizedBox(
+                  height: 15.0
               ),
               Container(
                 height: 300,
