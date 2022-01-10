@@ -117,9 +117,12 @@ class _InGameState extends State<InGame> {
 
   _showMessage(String msg){
     print(msg);
-    setState(() {
+    if(mounted){
+      setState(() {
       chat.add(ChatMessage(isSender: false, text: msg));
     });
+    }
+    
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
       duration: Duration(milliseconds: 200),
@@ -147,27 +150,32 @@ class _InGameState extends State<InGame> {
       else if(k == 'gameRound') gameRound = v;
       else if(k == 'person'){
         v.forEach((vv){
-            
-          setState((){
+          if(mounted){
+            setState((){
             showUsers.add(new Character(
                   id: vv[0],
                   name: vv[1],
-                  score: vv[4],
-                  img: vv[5],
+                  score: vv[2],
+                  img: vv[3],
                 ));
             });
+          }
+          
           
         });
       }
 
       while (showUsers.length < 6) {
-        setState(() {
+        if(mounted){
+          setState(() {
           showUsers.add(new Character(
           id: '/',
           name: '',
           img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
         ));
         });
+        }
+        
       }
     });
 
