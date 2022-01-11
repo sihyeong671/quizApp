@@ -1,4 +1,5 @@
 import 'package:client/provider/userID.dart';
+import 'package:client/utils/socketManager.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ GetIt getIt = GetIt.instance;
 void main() async {
   getIt.registerSingleton<UserID>(UserID());
 
+  initSocket();
   KakaoContext.clientId = "b6b6f5078bcc8d1e50be1b189a5ce58c";
   runApp(MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => UserID())],

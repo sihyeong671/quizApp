@@ -109,7 +109,7 @@ class _LogInState extends State<LogIn> {
                                               ? provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false) 
                                               : provider.add(jsonData['userID'], jsonData['nickName'], jsonData['img'], jsonData['score'], false);
                                             
-                                            initSocket();
+                                            // initSocket();
                                             connectSocket();
 
                                             Navigator.push(context, 
@@ -134,7 +134,7 @@ class _LogInState extends State<LogIn> {
                                         
                                         provider.add("0", name, url, 0, true);
                                         
-                                        initSocket();
+                                        // initSocket();
                                         connectSocket();
                                         Navigator.push(context, 
                                           MaterialPageRoute(builder: (BuildContext context) => const Lobby()));
