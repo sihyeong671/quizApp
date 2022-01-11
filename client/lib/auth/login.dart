@@ -1,18 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:client/main.dart';
-import 'package:client/myPage/myPage.dart';
 import 'package:client/provider/userID.dart';
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
-import 'package:flutter_kakao_login/flutter_kakao_login.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/all.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LogIn extends StatefulWidget {
+  const LogIn({Key? key}) : super(key: key);
+
   @override
   _LogInState createState() => _LogInState();
 }
@@ -43,7 +41,7 @@ class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(1080, 2280),
+      designSize: const Size(1080, 2280),
       minTextAdapt: true,
       builder: () => 
         Scaffold(
@@ -83,7 +81,7 @@ class _LogInState extends State<LogIn> {
                                         child: Image.asset('assets/kakao_login_wide.png'),
                                         onPressed: () async {
                                           try {
-                                            final token = _isKaKaoTalkInstalled
+                                            _isKaKaoTalkInstalled
                                             ? await UserApi.instance.loginWithKakaoTalk() 
                                             : await UserApi.instance.loginWithKakaoAccount();
                                             
@@ -98,7 +96,7 @@ class _LogInState extends State<LogIn> {
                                             }
                                             
     
-                                            var res = await http.get(Uri.parse('http://192.249.18.158:80/user/${userID}'));
+                                            var res = await http.get(Uri.parse('http://192.249.18.158:80/user/$userID'));
                                             print("get한거: ${res.body}");
                                             if (jsonDecode(res.body).length == 0) {
                                               res = await http.post(Uri.parse('http://192.249.18.158:80/user/save'),
@@ -111,7 +109,7 @@ class _LogInState extends State<LogIn> {
                                               ? provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false) 
                                               : provider.add(jsonData['userID'], jsonData['nickName'], jsonData['img'], jsonData['score'], false);
                                             Navigator.push(context, 
-                                              MaterialPageRoute(builder: (BuildContext context) => Lobby()));
+                                              MaterialPageRoute(builder: (BuildContext context) => const Lobby()));
                                           } catch (e) {
                                             print('error on login: $e');
                                           }
@@ -123,7 +121,7 @@ class _LogInState extends State<LogIn> {
                                   height: 125.0.sp,
                                   child: ElevatedButton.icon(
                                     icon: Icon(Icons.add, size: 100.sp),
-                                    label: Text('게스트 로그인'),
+                                    label: const Text('게스트 로그인'),
                                     onPressed: () async {
                                         final response = await http.get(Uri.parse("https://nickname.hwanmoo.kr/?format=json&count=1"));
                                         final jsonData = jsonDecode(response.body);
@@ -132,7 +130,7 @@ class _LogInState extends State<LogIn> {
                                         
                                         provider.add("0", name, url, 0, true);
                                         Navigator.push(context, 
-                                          MaterialPageRoute(builder: (BuildContext context) => Lobby()));
+                                          MaterialPageRoute(builder: (BuildContext context) => const Lobby()));
                                     },
                                   )
                                 ),

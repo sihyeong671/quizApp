@@ -13,9 +13,12 @@ class Ranking extends StatefulWidget {
 }
 
 class _RankingState extends State<Ranking> {
-  
-  late var jsonData = [];
-  late var jsonDataFromFour= [];
+  var jsonData = [
+    // {'name': "test", 'score': 3, 'img': "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80"},
+    // {'name': "test", 'score': 3, 'img': "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80"},
+    // {'name': "test", 'score': 3, 'img': "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80"},
+  ];
+  var jsonDataFromFour= [];
 
   fetchRanking() async {
     try{
@@ -58,17 +61,23 @@ class _RankingState extends State<Ranking> {
                             width: 50.0.sp,
                           ),
                           CircleAvatar(
-                            backgroundImage: NetworkImage(jsonDataFromFour[index]['img']),
+                            backgroundImage: NetworkImage(jsonDataFromFour.isEmpty
+                                                      ? "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80"
+                                                      : jsonDataFromFour[index]['img']),
                             radius: 60.0.sp,
                           )
                         ],
                       ),
                       title: Text(
-                        '${jsonDataFromFour[index]['nickName']}',
+                        '${jsonDataFromFour.isEmpty
+                          ? 'test'
+                          : jsonDataFromFour[index]['nickName']}',
                         style: TextStyle(fontSize: 50.sp)
                       ),
                       subtitle: Text(
-                        '${jsonDataFromFour[index]['score']}',
+                        '${jsonDataFromFour.isEmpty
+                          ? 0
+                          : jsonDataFromFour[index]['score']}',
                         style: TextStyle(fontSize: 50.sp)
                       ),
                       dense:true
@@ -106,15 +115,21 @@ class _RankingState extends State<Ranking> {
                     backgroundColor: Colors.amberAccent[700],
                     child: CircleAvatar(
                         radius: 168.0.sp,
-                        backgroundImage: NetworkImage(jsonData[0]['img']),
+                        backgroundImage: NetworkImage(jsonData.isEmpty
+                                                      ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_640x640.jpg"
+                                                      : jsonData[0]['img']),
                     ),
                   ),
                 ),
                 SizedBox(
                     height: 10.0.sp
                 ),
-                Text('1등! ${jsonData[0]['nickName']}'),
-                Text('${jsonData[0]['score']}'),
+                Text('1등! ${jsonData.isEmpty
+                            ? '-'
+                            : jsonData[0]['nickName']}'),
+                Text('${jsonData.isEmpty
+                            ? 0
+                            : jsonData[0]['score']}'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -126,14 +141,20 @@ class _RankingState extends State<Ranking> {
                           backgroundColor: Colors.grey[400],
                           child: CircleAvatar(
                               radius: 143.0.sp,
-                              backgroundImage: NetworkImage(jsonData[1]['img']),
+                              backgroundImage: NetworkImage(jsonData.isEmpty
+                                                      ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_640x640.jpg"
+                                                      : jsonData[1]['img']),
                           ),
                         ),
                         SizedBox(
                             height: 10.0.sp
                           ),
-                        Text('2등! ${jsonData[1]['nickName']}'),
-                        Text('${jsonData[1]['score']}'),
+                        Text('2등! ${jsonData.isEmpty
+                            ? '-'
+                            : jsonData[1]['nickName']}'),
+                        Text('${jsonData.isEmpty
+                            ? 0
+                            : jsonData[1]['score']}'),
                       ],
                     ),
                     Column(
@@ -143,14 +164,20 @@ class _RankingState extends State<Ranking> {
                           backgroundColor: Colors.brown,
                           child: CircleAvatar(
                               radius: 143.0.sp,
-                              backgroundImage: NetworkImage(jsonData[2]['img']),
+                              backgroundImage: NetworkImage(jsonData.isEmpty
+                                                      ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_640x640.jpg"
+                                                      : jsonData[2]['img']),
                           ),
                         ),
                         SizedBox(
                             height: 10.0.sp
                           ),
-                        Text('3등! ${jsonData[2]['nickName']}'),
-                        Text('${jsonData[2]['score']}'),
+                        Text('3등! ${jsonData.isEmpty
+                            ? '-'
+                            : jsonData[2]['nickName']}'),
+                        Text('${jsonData.isEmpty
+                            ? 0
+                            : jsonData[2]['score']}'),
                       ],
                     ),
                   ],
