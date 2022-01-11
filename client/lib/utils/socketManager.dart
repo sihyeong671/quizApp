@@ -106,12 +106,7 @@ inGameReadyToggle(roomName){
   );
 }
 
-justSetState(Function setState){
-  _socket.on('update-inGame-room', (data){
-    setState();
-  });
 
-}
 
 
 

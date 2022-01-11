@@ -34,7 +34,50 @@ class _InGameState extends State<InGame> {
   late bool isGameStart;
   late bool isMeReady;
   List<List<dynamic>> users = [];
-  List<Character> showUsers = [];
+  List<Character> showUsers = [
+    Character(
+      id: '/',
+      name: '',
+      score: 0,
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+      isReady: false,
+    ),
+    Character(
+      id: '/',
+      name: '',
+      score: 0,
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+      isReady: false,
+    ),
+    Character(
+      id: '/',
+      name: '',
+      score: 0,
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+      isReady: false,
+    ),
+    Character(
+      id: '/',
+      name: '',
+      score: 0,
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+      isReady: false,
+    ),
+    Character(
+      id: '/',
+      name: '',
+      score: 0,
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+      isReady: false,
+    ),
+    Character(
+      id: '/',
+      name: '',
+      score: 0,
+      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+      isReady: false,
+    )
+  ];
   // int limitTime = 10;
 
   @override
@@ -134,42 +177,48 @@ class _InGameState extends State<InGame> {
   }
 
   _updateInGameData(roomInfo) {
-    print(roomInfo);
-    print(roomInfo["currentNum"].runtimeType);
-    if(mounted){
-      setState(() {
-        currnetNum = roomInfo["currentNum"];
-        isGameStart = roomInfo["isGameStart"];
-        problem = roomInfo["problem"];
-        answer = roomInfo["answer"];
-        roomInfo["users"].forEach((v){
-          if(v[2] == provider.myName) isMeReady = v[4];
-          users.add([v[0], v[1], v[2], v[3], v[4]]);
-        });
+    showUsers.clear();
+    users.clear();
+    List<Character> temp = [];
+    currnetNum = roomInfo["currentNum"];
+    isGameStart = roomInfo["isGameStart"];
+    problem = roomInfo["problem"];
+    answer = roomInfo["answer"];
+    roomInfo["users"].forEach((v){
+      if(v[2] == provider.myName) isMeReady = v[4];
+      users.add([v[0], v[1], v[2], v[3], v[4]]);
+    });
+    users.forEach((v) {
 
-        users.forEach((v) {
-          showUsers.add(Character(
-            id: v[0],
-            score: v[1],
-            name: v[2],
-            img: v[3],
-            isReady: v[4],
-          ));
-        });
+      temp.add(Character(
+        id: v[0],
+        name: v[2],
+        score: v[1],
+        isReady: v[4],
+        img: v[3],
+      ));
+    });
 
-        while(showUsers.length < 6){
-          showUsers.add(Character(
-            id: '/',
-            name: '',
-            score: 0,
-            img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-            isReady: false,
-          ));
-        }
+    print(temp);
 
-      });
+
+    while(temp.length < 6){
+      temp.add(Character(
+        id: '/',
+        name: '',
+        score: 0,
+        img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+        isReady: false,
+      ));
     }
+
+    setState(() {
+      showUsers = temp;
+    });
+      
+      
   }
+  
 
   _gameStart(){
     if(mounted){

@@ -66,6 +66,9 @@ class _LobbyState extends State<Lobby> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    
     return WillPopScope(
       onWillPop: () {
         return Future(() => false);
@@ -157,6 +160,41 @@ class _LobbyState extends State<Lobby> {
     );
   }
 
+  _updateRoomData(data){
+    List<Room> initRooms = [];
+    print(data);
+    data.forEach((k, v){
+      late int totalNum;
+      late int currentNum;
+      String roomName=k;
+      late bool isLock;
+      late bool isGameStart;
+      v.forEach((kk, vv){
+
+        if(kk == 'totalNum') totalNum = vv;
+        else if(kk == 'currentNum') currentNum = vv;
+        else if(kk == 'isLock') isLock = vv;
+        else if(kk == 'isGameStart') isGameStart = vv;
+
+      });
+
+      Room roomInstance = new Room(
+        roomName,
+        totalNum,
+        currentNum,
+        isLock,
+        isGameStart
+      );
+
+      initRooms.add(roomInstance);
+
+    });
+
+    setState(() {
+      rooms = initRooms;
+    });
+  }
+
   _showToastMessage(data){
     Fluttertoast.showToast(
       msg: data,
@@ -197,40 +235,7 @@ class _LobbyState extends State<Lobby> {
   }
 
 // 방 전체 업데이트
-  _updateRoomData(data){
-    List<Room> initRooms = [];
-    print(data);
-    data.forEach((k, v){
-      late int totalNum;
-      late int currentNum;
-      String roomName=k;
-      late bool isLock;
-      late bool isGameStart;
-      v.forEach((kk, vv){
-
-        if(kk == 'totalNum') totalNum = vv;
-        else if(kk == 'currentNum') currentNum = vv;
-        else if(kk == 'isLock') isLock = vv;
-        else if(kk == 'isGameStart') isGameStart = vv;
-
-      });
-
-      Room roomInstance = new Room(
-        roomName,
-        totalNum,
-        currentNum,
-        isLock,
-        isGameStart
-      );
-
-      initRooms.add(roomInstance);
-
-    });
-
-    setState(() {
-      rooms = initRooms;
-    });
-  }
+  
 
 }
 
@@ -252,6 +257,9 @@ class _roomModalState extends State<roomModal> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    
     return AlertDialog(
       title: Text("방 이름을 입력해주세요"),
       elevation: 24.0,
