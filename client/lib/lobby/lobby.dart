@@ -26,9 +26,7 @@ class _LobbyState extends State<Lobby> {
   void _onRefresh() async{
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
-    // 이게 맞나?
-    print("리프레쉬");
-    getRoomData();
+    pullToReFresh();
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
@@ -54,10 +52,11 @@ class _LobbyState extends State<Lobby> {
     connectSocket();
   }
 
-  _initSocketListener(){
-    roomExistenceCheck(_showToastMessage);
-    setRoomData(_updateRoomData);
-    failToJoin(_showToastMessage);
+  _initSocketListener() async{
+    // on
+    await roomExistenceCheck(_showToastMessage);
+    await setRoomData(_updateRoomData);
+    await failToJoin(_showToastMessage);
   }
 
   @override
@@ -67,7 +66,6 @@ class _LobbyState extends State<Lobby> {
         return Future(() => false);
       },
       child: Scaffold(
-        // backgroundColor: Colors.amber,
         floatingActionButton: FloatingButton(),
         body: 
           SingleChildScrollView(
@@ -112,8 +110,8 @@ class _LobbyState extends State<Lobby> {
                             children: <Widget>[
                               ListTile(
                                 leading: Text('${index+1}'),
-                                title: Text('${rooms[index].gameTitle}'),
-                                subtitle: Text('${rooms[index].gameType}'),
+                                title: Text('${rooms[index].roomName}'),
+                                subtitle: Text('개발중'),
                                 trailing: Text('${rooms[index].currentNum}/${rooms[index].totalNum}'),
                               ),
                               ButtonBar(
@@ -122,12 +120,12 @@ class _LobbyState extends State<Lobby> {
                                     child: Text('참가하기'),
                                     onPressed: () {
                                       joinRoom({
-                                        "roomName": rooms[index].gameTitle,
+                                        "roomName": rooms[index].roomName,
                                         "name": provider.myName,
-                                        "img": provider.myImage
+                                        // "img": provider.myImage
                                       });
                                       Navigator.push(context, 
-                                        MaterialPageRoute(builder: (BuildContext context) => InGame(gameTitle: rooms[index].gameTitle)));
+                                        MaterialPageRoute(builder: (BuildContext context) => InGame(roomName: rooms[index].roomName)));
                                     },
                                   )
                                 ]
@@ -164,68 +162,61 @@ class _LobbyState extends State<Lobby> {
     );
   }
 
+// 방만들기
   _updateInfo(data){
 
     late int totalNum;
     late int currentNum;
-    late String gameType;
-    late String gameTitle;
     late bool isLock;
     late bool isGameStart;
-
+    String roomName = data.keys[0]; 
+    print(data.runtimeType);
     data.forEach((name, value){
       if(name == 'totalNum') totalNum = value;
       else if(name == 'currentNum') currentNum = value;
-      else if(name == 'gameType') gameType = value;
-      else if(name == 'gameTitle') gameTitle = value;
       else if(name == 'isLock') isLock = value;
       else if(name == 'isGameStart') isGameStart = value;
     });
     
     Room newRoom = new Room(
+      roomName,
       totalNum,
       currentNum,
-      gameType,
-      gameTitle,
       isLock,
       isGameStart
     );
-    print(newRoom);
     
     setState(() {
       rooms.add(newRoom);
     });
   }
 
+// 방 전체 업데이트
   _updateRoomData(data){
     List<Room> initRooms = [];
-
+    print(data);
     data.forEach((k, v){
       late int totalNum;
       late int currentNum;
-      late String gameType;
-      late String gameTitle;
+      String roomName=k;
       late bool isLock;
       late bool isGameStart;
       v.forEach((kk, vv){
 
         if(kk == 'totalNum') totalNum = vv;
         else if(kk == 'currentNum') currentNum = vv;
-        else if(kk == 'gameType') gameType = vv;
-        else if(kk == 'gameTitle') gameTitle = vv;
         else if(kk == 'isLock') isLock = vv;
         else if(kk == 'isGameStart') isGameStart = vv;
 
       });
 
       Room roomInstance = new Room(
-          totalNum,
-          currentNum,
-          gameType,
-          gameTitle,
-          isLock,
-          isGameStart
-        );
+        roomName,
+        totalNum,
+        currentNum,
+        isLock,
+        isGameStart
+      );
 
       initRooms.add(roomInstance);
 
@@ -252,7 +243,7 @@ class _roomModalState extends State<roomModal> {
   final provider = getIt.get<UserID>();
 
   bool _lock = true;
-  String? gameTitle = "인물";
+  String? gameType = "인물";
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +264,7 @@ class _roomModalState extends State<roomModal> {
                 ),
               ),
               DropdownButton(
-                value:gameTitle,
+                value:gameType,
                 icon: Icon(Icons.add),
                 items: <String>['인물', '영화', '노래'].map
                   <DropdownMenuItem<String>>((String value){
@@ -285,7 +276,7 @@ class _roomModalState extends State<roomModal> {
               
                 onChanged: (String? newValue){
                   setState(() {
-                    gameTitle = newValue;
+                    gameType = newValue;
                   });
                 }),
               Container(
@@ -318,10 +309,12 @@ class _roomModalState extends State<roomModal> {
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
-            makeRoom(_roomNameController.text, gameTitle, _lock, provider.myName, provider.myImage);
-            print("방만들기");
+            makeRoom(_roomNameController.text, _lock, provider.myName);
             Navigator.push(context, 
-              MaterialPageRoute(builder: (BuildContext context) => InGame(gameTitle: _roomNameController.text)));
+              MaterialPageRoute(builder: (BuildContext context) => InGame(
+                roomName: _roomNameController.text,
+
+                )));
           },
           child: Text('방 만들기')),
         ElevatedButton(

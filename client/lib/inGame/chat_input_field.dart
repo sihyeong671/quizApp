@@ -3,9 +3,9 @@ import 'package:client/utils/socketManager.dart';
 
 
 class ChatInputField extends StatefulWidget {
-  final String? gameTitle;
+  final String? roomName;
   final Function? showMessageMe;
-  const ChatInputField({ Key? key, @required this.gameTitle, @required this.showMessageMe}) : super(key: key);
+  const ChatInputField({ Key? key, @required this.roomName, @required this.showMessageMe}) : super(key: key);
 
   @override
   _ChatInputFieldState createState() => _ChatInputFieldState();
@@ -68,7 +68,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                       onPressed: (){
                         if(_msgController.text != ''){
                           widget.showMessageMe!(_msgController.text);
-                          sendMessage(_msgController.text, widget.gameTitle!);
+                          sendMessage(_msgController.text, widget.roomName!);
                           _msgController.clear();
                         }
                       },

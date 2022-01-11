@@ -11,8 +11,11 @@ import 'package:client/main.dart';
 import 'package:client/provider/userID.dart';
 
 class InGame extends StatefulWidget {
-  final String gameTitle;
-  const InGame({ Key? key, required this.gameTitle}) : super(key: key);
+  final String roomName;
+
+  const InGame({ Key? key,
+    required this.roomName
+    }) : super(key: key);
 
   @override
   _InGameState createState() => _InGameState();
@@ -21,65 +24,34 @@ class InGame extends StatefulWidget {
 class _InGameState extends State<InGame> {
 
   final provider = getIt.get<UserID>();
-
-  bool isGameStart = false;
-  int gameRound = 0;
-  late String gameType;
-  List<Character> showUsers = [
-    Character(
-      id: '/',
-      name: '',
-      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-    ),
-    Character(
-      id: '/',
-      name: '',
-      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-    ),
-    Character(
-      id: '/',
-      name: '',
-      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-    ),
-    Character(
-      id: '/',
-      name: '',
-      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-    ),
-    Character(
-      id: '/',
-      name: '',
-      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-    ),
-    Character(
-      id: '/',
-      name: '',
-      img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-    ),
-  ];
   List<ChatMessage> chat = [];
   final ScrollController _scrollController = ScrollController();
 
-  String problem = '';
-  String answer = ''; 
-  int gameScore = 0;
+  late int currnetNum; 
+  late String problem;
+  late String answer; 
+  late int gameScore;
+  late bool isGameStart;
+  late bool isMeReady;
+  List<List<dynamic>> users = [];
+  List<Character> showUsers = [];
+  // int limitTime = 10;
+
   @override
   void initState() {
     super.initState();
     _initSocketListener();
   }
 
-
-  _initSocketListener(){
-    setDetailRoomData(_setRoomData); // 처음에 데이터 받기
-    requestDetailRoomData(widget.gameTitle); // 데이터 요청
-    broadCastMessage(_showMessage);
-    gameStart(_gameStart);
-    quizContent(_showQuizData);
-    roundOver(_roundOver);
-    correctAnswer(_giveScore);
-    // 라운드 progress
-    // 게임종료
+  _initSocketListener()async{
+    //on
+    await getInGameData(_updateInGameData);
+    await broadCastMessage(_showMessage);
+    await gameStart(_gameStart);
+    await gameOver();
+    //emit
+    await quizContent(_showQuizData);
+    await requestRoomData(widget.roomName); // 데이터 요청
   }
   
   @override
@@ -102,16 +74,11 @@ class _InGameState extends State<InGame> {
                   SizedBox(
                     height: 30.0,
                   ),
-                  isGameStart ? Row(
-                    children: [
-                      Text("타이머 숫자")
-                    ],
-                  ): SizedBox(height:30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        child: Text("${gameRound}"),
+                        child: Text("캐치브레인"),
                       )
                     ],
                   ),
@@ -128,7 +95,7 @@ class _InGameState extends State<InGame> {
                         ],
                       ),
                       Expanded( 
-                        child: isGameStart ? PhotoQuiz(answer: answer) : BeforeGame(name: provider.myName, gameTitle: widget.gameTitle)
+                        child: isGameStart ? PhotoQuiz(quiz: problem) : BeforeGame(name: provider.myName, roomName: widget.roomName, isReady: isMeReady,)
                       ),
                       Column(
                         children: <Widget>[
@@ -150,7 +117,8 @@ class _InGameState extends State<InGame> {
                         Message(message: chat[index]),
                     ),
                   ),
-                  ChatInputField(gameTitle: widget.gameTitle, showMessageMe: showMessageMe)
+                  ChatInputField(roomName: widget.roomName, showMessageMe: showMessageMe)
+                
                 ],
               ),
             )
@@ -159,13 +127,51 @@ class _InGameState extends State<InGame> {
     );
   }
 
+  _updateInGameData(roomInfo) {
+    print(roomInfo);
+    print(roomInfo["currentNum"].runtimeType);
+    if(mounted){
+      setState(() {
+        currnetNum = roomInfo["currentNum"];
+        isGameStart = roomInfo["isGameStart"];
+        problem = roomInfo["problem"];
+        answer = roomInfo["answer"];
+        roomInfo["users"].forEach((v){
+          if(v[2] == provider.myName) isMeReady = v[3];
+          users.add([v[0], v[1], v[2], v[3]]);
+        });
+
+        users.forEach((v) {
+          showUsers.add(Character(
+            id: v[0],
+            score: v[1],
+            name: v[2],
+            isReady: v[3],
+            // 임시방편 나중에 고쳐야함
+            img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+          ));
+        });
+
+        while(showUsers.length < 6){
+          showUsers.add(Character(
+            id: '/',
+            name: '',
+            score: 0,
+            isReady: false,
+            img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+          ));
+        }
+
+      });
+    }
+  }
+
   _gameStart(){
     if(mounted){
       setState(() {
         isGameStart = true;
       });
     }
-    roundStart(widget.gameTitle);
   }
 
   _showQuizData(String problem, String answer){
@@ -174,7 +180,6 @@ class _InGameState extends State<InGame> {
   }
   
   _showMessage(String msg){
-    print(msg);
     if(mounted){
       setState(() {
       chat.add(ChatMessage(isSender: false, text: msg));
@@ -200,84 +205,59 @@ class _InGameState extends State<InGame> {
       curve: Curves.easeInOut);
   }
 
-  _setRoomData(data){
-    showUsers.clear();
-    print(data);
-    data.forEach((v, k){
-      if(k == 'gameType') gameType = v;
-      else if(k == 'gameRound') gameRound = v;
-      else if(k == 'person'){
-        v.forEach((vv){
-          if(mounted){
-              showUsers.add(new Character(
-                id: vv[0],
-                name: vv[1],
-                score: gameScore,
-                img: vv[3],
-              ));
-          }
-          
-        });
-      }
 
-      while (showUsers.length < 6) {
-          showUsers.add(new Character(
-            id: '/',
-            name: '',
-            img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-          ));
-      }
-      if(mounted){
-        setState(() {
-        
-      });
-      }
-      
-    });
 
-    if(mounted){
-      
-    }
+  // _roundOver(){
+  //   print("지연1");
+  //   Future.delayed(Duration(milliseconds: 1000));
+  //   print("지연2");
+  //   setState(() {
+  //     gameRound++;
+  //   });
+  //   if(gameRound < 5) roundStart(widget.roomName);
+  //   else{
+  //     // 다 쫓아내고 정보 갱신
+  //     gameOver(widget.roomName);
+  //   } 
     
+  //   // Delay
     
-  }
-
-  _roundOver(){
-    print("지연1");
-    Future.delayed(Duration(milliseconds: 1000));
-    print("지연2");
-    setState(() {
-      gameRound++;
-    });
-    
-    // Delay
-    roundStart(widget.gameTitle);
-  }
+  // }
 
   _giveScore(int score){
     setState(() {
       gameScore += 5;
     });
-    
   }
+
+  // _runTimerChange(){
+  //   print("시간 줄이기");
+  //   setState(() {
+  //     limitTime--;
+  //   });
+  // }
 
 
 }
 
+
 class Character extends StatefulWidget {
 
+  
   const Character({
     Key? key,
-    this.id,
-    this.name,
-    this.score,
-    this.img,
+    required this.id,
+    required this.name,
+    required this.score,
+    required this.isReady,
+    required this.img,
   }) : super(key: key);
 
-  final String? name;
-  final String? img;
-  final String? id;
-  final int? score;
+  final String id;
+  final String name;
+  final int score;
+  final bool isReady;
+  final String img;
 
   @override
   State<Character> createState() => _CharacterState();
@@ -286,6 +266,12 @@ class Character extends StatefulWidget {
 class _CharacterState extends State<Character> {
 
   late bool isEmpty;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   
   @override
   Widget build(BuildContext context){
@@ -297,36 +283,41 @@ class _CharacterState extends State<Character> {
       isEmpty = false;
     }
 
-    return Row(
-      children: <Widget>[
-        Text(widget.name!),
-        SizedBox(
-          width: 10.0,
+    return Column(
+      children: [
+        Row(
+          children: <Widget>[
+            SizedBox(
+              width: 10.0,
+            ),
+            isEmpty ? CircleAvatar(
+              radius: 15,
+              backgroundImage: NetworkImage(widget.img),
+            ) : CircleAvatar(
+              radius: 15,
+              backgroundColor: widget.isReady ? Colors.green : Colors.red,
+              child: CircleAvatar(
+                radius: 13,
+                backgroundImage: NetworkImage(widget.img),
+              ),
+            ),
+            SizedBox(
+              width: 10.0,
+            )
+          ],
         ),
-        isEmpty ? CircleAvatar(
-          radius: 15,
-          backgroundImage: NetworkImage(widget.img!),
-        ) : CircleAvatar(
-          radius: 15,
-          backgroundColor: Colors.green,
-          child: CircleAvatar(
-            radius: 13,
-            backgroundImage: NetworkImage(widget.img!),
-          ),
-        ),
-        SizedBox(
-          width: 10.0,
-        )
+        Text(widget.name)
       ],
     );
   }
+
 }
 
 
 class PhotoQuiz extends StatefulWidget {
   
-  final String answer;
-  const PhotoQuiz({ Key? key, required this.answer}) : super(key: key);
+  final String quiz;
+  const PhotoQuiz({ Key? key, required this.quiz}) : super(key: key);
 
   @override
   State<PhotoQuiz> createState() => _PhotoQuizState();
@@ -337,7 +328,7 @@ class _PhotoQuizState extends State<PhotoQuiz> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(widget.answer)
+        Text(widget.quiz)
       ],
     );
   }
@@ -346,12 +337,14 @@ class _PhotoQuizState extends State<PhotoQuiz> {
 
 class BeforeGame extends StatefulWidget {
   
-  final String gameTitle;
+  final String roomName;
   final String name;
+  final bool isReady;
   const BeforeGame({
     Key? key,
     required this.name,
-    required this.gameTitle,
+    required this.isReady,
+    required this.roomName,
     }) : super(key: key);
 
   @override
@@ -364,11 +357,30 @@ class _BeforeGameState extends State<BeforeGame> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        widget.isReady ?
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            textStyle: TextStyle(color: Colors.green)
+          ),
+          onPressed: (){
+            inGameReadyToggle(widget.roomName);
+          },
+          child: Text("준비하기")
+        ):
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            textStyle: TextStyle(color: Colors.red)
+          ),
+          onPressed: (){
+            inGameReadyToggle(widget.roomName);
+          },
+          child: Text("준비하기")
+        ),
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
             // 
-            leaveRoom(widget.gameTitle);
+            leaveRoom(widget.roomName);
           },
           child: Text("나가기")
         )
