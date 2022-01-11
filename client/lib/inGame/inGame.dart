@@ -4,8 +4,10 @@ import 'package:client/inGame/message.dart';
 import 'package:client/models/Room.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/socketManager.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tuple/tuple.dart';
 import 'package:client/utils/socketManager.dart';
+import 'dart:ui' as ui;
 
 import 'package:client/main.dart';
 import 'package:client/provider/userID.dart';
@@ -107,71 +109,95 @@ class _InGameState extends State<InGame> {
   @override
   Widget build(BuildContext context) {
     
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () {
-          return Future(() => false);
-        },
-        child: Scaffold(
-          body: 
-            GestureDetector(
-              onTap: (){
-                FocusScope.of(context).unfocus();
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    height: 30.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: Text("캐치브레인"),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Column(
-                        children: <Widget>[
-                          Padding(padding: EdgeInsets.only(top: 50.0)),
-                          showUsers[0],
-                          Padding(padding: EdgeInsets.only(top: 50.0)),
-                          showUsers[1],
-                          Padding(padding: EdgeInsets.only(top: 50.0)),
-                          showUsers[2]
-                        ],
-                      ),
-                      Expanded( 
-                        child: isGameStart ? PhotoQuiz(quiz: problem) : BeforeGame(name: provider.myName, roomName: widget.roomName, isReady: isMeReady,)
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Padding(padding: EdgeInsets.only(top: 50.0)),
-                          showUsers[3],
-                          Padding(padding: EdgeInsets.only(top: 50.0)),
-                          showUsers[4],
-                          Padding(padding: EdgeInsets.only(top: 50.0)),
-                          showUsers[5]
-                        ],
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      itemCount: chat.length,
-                      itemBuilder: (context, index) => 
-                        Message(message: chat[index]),
+    return ScreenUtilInit(
+      designSize: Size(1080, 2280),
+      minTextAdapt: true,
+      builder: () => 
+        SafeArea(
+        child: WillPopScope(
+          onWillPop: () {
+            return Future(() => false);
+          },
+          child: Scaffold(
+            body: 
+              GestureDetector(
+                onTap: (){
+                  FocusScope.of(context).unfocus();
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top)),
+                    SizedBox(
+                      height: 30.0.sp,
                     ),
-                  ),
-                  ChatInputField(roomName: widget.roomName, showMessageMe: showMessageMe)
-                
-                ],
-              ),
-            )
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Text(
+                            "치타는 최선을 다했습니다.",
+                            style: TextStyle(
+                            fontSize: 60.sp,
+                            foreground: Paint()
+                            ..shader = ui.Gradient.linear(
+                              const Offset(0, 50),
+                              const Offset(150, 0),
+                              <Color>[
+                                Colors.red[900]!,
+                                Colors.orange[200]!,
+                              ],
+                            ),
+                            )
+                          )
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Column(
+                          children: <Widget>[
+                            Padding(padding: EdgeInsets.only(top: 50.0.sp)),
+                            showUsers[0],
+                            Padding(padding: EdgeInsets.only(top: 50.0.sp)),
+                            showUsers[2],
+                            Padding(padding: EdgeInsets.only(top: 50.0.sp)),
+                            showUsers[4]
+                          ],
+                        ),
+                        Expanded( 
+                          child: isGameStart ? PhotoQuiz(quiz: problem) : BeforeGame(name: provider.myName, roomName: widget.roomName, isReady: isMeReady,)
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Padding(padding: EdgeInsets.only(top: 50.0.sp)),
+                            showUsers[1],
+                            Padding(padding: EdgeInsets.only(top: 50.0.sp)),
+                            showUsers[3],
+                            Padding(padding: EdgeInsets.only(top: 50.0.sp)),
+                            showUsers[5]
+                          ],
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child:
+                      Container(
+                        color: Colors.black.withOpacity(0.05),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount: chat.length,
+                          itemBuilder: (context, index) => 
+                            Message(message: chat[index]),
+                        ),
+                      ),
+                    ),
+                    ChatInputField(roomName: widget.roomName, showMessageMe: showMessageMe)
+                  
+                  ],
+                ),
+              )
+          ),
         ),
       ),
     );
@@ -205,7 +231,7 @@ class _InGameState extends State<InGame> {
     });
 
     print(temp);
-
+    
     while(temp.length < 6){
       temp.add(Character(
         id: '/',
@@ -218,6 +244,7 @@ class _InGameState extends State<InGame> {
 
     setState(() {
       showUsers = temp;
+      print('showUsers: ${showUsers[2].name}');
     });
       
   }
@@ -256,10 +283,10 @@ class _InGameState extends State<InGame> {
     this.answer = answer;
   }
   
-  _showMessage(String msg){
+  _showMessage(String msg, String img){
     if(mounted){
       setState(() {
-      chat.add(ChatMessage(isSender: false, text: msg));
+      chat.add(ChatMessage(isSender: false, text: msg, image: img));
     });
     }
     
@@ -269,10 +296,10 @@ class _InGameState extends State<InGame> {
       curve: Curves.easeInOut);
   }
   
-  showMessageMe(String msg){
+  showMessageMe(String msg, String img){
     if(mounted){
       setState(() {
-        chat.add(ChatMessage(isSender: true, text: msg));
+        chat.add(ChatMessage(isSender: true, text: msg, image: img));
       });
     }
     
@@ -351,12 +378,14 @@ class _CharacterState extends State<Character> {
     if(name.length > 6){
       _name = name.substring(0, 6)+'...';
     }
-    else _name = name;
+    else {
+      _name = name;
+    }
   }
   
   @override
   Widget build(BuildContext context){
-
+    print(_name);
     if(widget.id == '/'){
       isEmpty = true;
     }
@@ -369,24 +398,27 @@ class _CharacterState extends State<Character> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(widget.score.toString()),
+        SizedBox(
+          width: 10.0.sp,
+        ),
         Row(
           children: <Widget>[
             SizedBox(
-              width: 10.0,
+              width: 20.0.sp,
             ),
             isEmpty ? CircleAvatar(
-              radius: 15,
+              radius: 70.sp,
               backgroundImage: NetworkImage(widget.img),
             ) : CircleAvatar(
-              radius: 15,
+              radius: 70.sp,
               backgroundColor: widget.isReady ? Colors.green : Colors.red,
               child: CircleAvatar(
-                radius: 13,
+                radius: 60.0.sp,
                 backgroundImage: NetworkImage(widget.img),
               ),
             ),
             SizedBox(
-              width: 10.0,
+              width: 10.0.sp,
             )
           ],
         ),
@@ -439,36 +471,42 @@ class _BeforeGameState extends State<BeforeGame> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        widget.isReady ?
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            textStyle: TextStyle(color: Colors.green)
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          widget.isReady ?
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.green[300],
+            ),
+            onPressed: (){
+              inGameReadyToggle(widget.roomName);
+            },
+            child: Text("준비하기")
+          ):
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.amber,
+            ),
+            onPressed: (){
+              inGameReadyToggle(widget.roomName);
+            },
+            child: Text("준비하기")
           ),
-          onPressed: (){
-            inGameReadyToggle(widget.roomName);
-          },
-          child: Text("준비하기")
-        ):
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            textStyle: TextStyle(color: Colors.red)
-          ),
-          onPressed: (){
-            inGameReadyToggle(widget.roomName);
-          },
-          child: Text("준비하기")
-        ),
-        ElevatedButton(
-          onPressed: (){
-            Navigator.pop(context);
-            // 
-            leaveRoom(widget.roomName);
-          },
-          child: Text("나가기")
-        )
-      ],
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.amber[900],
+            ),
+            onPressed: (){
+              Navigator.pop(context);
+              // 
+              leaveRoom(widget.roomName);
+            },
+            child: Text("나가기")
+          )
+        ],
+      ),
     );
   }
 } 

@@ -90,6 +90,9 @@ class _LobbyState extends State<Lobby> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.amber,
+                          ),
                           child: Text('방만들기'),
                           onPressed: () {
                             showDialog(
@@ -99,6 +102,9 @@ class _LobbyState extends State<Lobby> {
                           },
                         ),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.amber,
+                          ),
                           child: Text('빠른입장'),
                           onPressed: () {
                             quickEntry(provider.myName);
@@ -132,7 +138,8 @@ class _LobbyState extends State<Lobby> {
                                   ButtonBar(
                                     children: <Widget>[
                                       TextButton(
-                                        child: Text('참가하기'),
+                                        child: Text('참가하기',
+                                              style: TextStyle(color: Colors.amber[900])),
                                         onPressed: () {
                                           joinRoom({
                                             "roomName": rooms[index].roomName,

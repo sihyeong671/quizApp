@@ -127,7 +127,7 @@ sendMessage(String message, String roomName){
 // 메시지 브로드 캐스트f
 broadCastMessage(Function showMessage){
   _socket.on('receive-message', (data){
-    showMessage(data);
+    showMessage(data["msg"], data["img"]);
   });
 }
 

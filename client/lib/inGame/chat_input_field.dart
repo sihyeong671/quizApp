@@ -1,6 +1,7 @@
+import 'package:client/provider/userID.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/socketManager.dart';
-
+import 'package:client/main.dart';
 
 class ChatInputField extends StatefulWidget {
   final String? roomName;
@@ -12,6 +13,7 @@ class ChatInputField extends StatefulWidget {
 }
 
 class _ChatInputFieldState extends State<ChatInputField> {
+  final provider = getIt.get<UserID>();
 
   final TextEditingController _msgController = TextEditingController();
 
@@ -57,7 +59,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                       child: TextField(
                         controller: _msgController,
                         decoration: InputDecoration(
-                          hintText: "정답",
+                          hintText: "",
                           border: InputBorder.none,
                         ),
                       ),
@@ -66,7 +68,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                     IconButton(
                       onPressed: (){
                         if(_msgController.text != ''){
-                          widget.showMessageMe!(_msgController.text);
+                          widget.showMessageMe!(_msgController.text, provider.myImage);
                           sendMessage(_msgController.text, widget.roomName!);
                           _msgController.clear();
                         }

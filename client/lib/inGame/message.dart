@@ -22,7 +22,7 @@ class Message extends StatelessWidget {
             SizedBox(width: 20.0 / 2),
             CircleAvatar(
               radius: 12,
-              backgroundImage: AssetImage("assets/cutesexy.jpeg"),
+              backgroundImage: NetworkImage(message.image),
             ),
             SizedBox(width: 20.0 / 2),
           ],

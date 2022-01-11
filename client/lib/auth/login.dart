@@ -123,6 +123,9 @@ class _LogInState extends State<LogIn> {
                                   height: 140.0.sp,
                                   child: ElevatedButton.icon(
                                     icon: Icon(Icons.add, size: 100.sp),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.amber[900],
+                                    ),
                                     label: const Text('게스트 로그인'),
                                     onPressed: () async {
                                         final response = await http.get(Uri.parse("https://nickname.hwanmoo.kr/?format=json&count=1"));
