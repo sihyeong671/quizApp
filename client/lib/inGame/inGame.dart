@@ -369,7 +369,7 @@ class _CharacterState extends State<Character> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(widget.score.toString()),
+        isEmpty ? Text('') : Text(widget.score.toString()) ,
         Row(
           children: <Widget>[
             SizedBox(
