@@ -119,8 +119,8 @@ class _LogInState extends State<LogIn> {
                                     )
                                 ),
                                 SizedBox(
-                                  width: 875.0.sp,
-                                  height: 125.0.sp,
+                                  width: 960.0.sp,
+                                  height: 140.0.sp,
                                   child: ElevatedButton.icon(
                                     icon: Icon(Icons.add, size: 100.sp),
                                     label: const Text('게스트 로그인'),

@@ -216,31 +216,33 @@ class _LobbyState extends State<Lobby> {
 
 // 방만들기
   _updateInfo(data){
-
-    late int totalNum;
-    late int currentNum;
-    late bool isLock;
-    late bool isGameStart;
-    String roomName = data.keys[0]; 
-    print(data.runtimeType);
-    data.forEach((name, value){
-      if(name == 'totalNum') totalNum = value;
-      else if(name == 'currentNum') currentNum = value;
-      else if(name == 'isLock') isLock = value;
-      else if(name == 'isGameStart') isGameStart = value;
-    });
-    
-    Room newRoom = new Room(
-      roomName,
-      totalNum,
-      currentNum,
-      isLock,
-      isGameStart
-    );
-    
-    setState(() {
-      rooms.add(newRoom);
-    });
+    if (mounted){
+      setState(() {
+        late int totalNum;
+        late int currentNum;
+        late bool isLock;
+        late bool isGameStart;
+        String roomName = data.keys[0]; 
+        print(data.runtimeType);
+        data.forEach((name, value){
+          if(name == 'totalNum') totalNum = value;
+          else if(name == 'currentNum') currentNum = value;
+          else if(name == 'isLock') isLock = value;
+          else if(name == 'isGameStart') isGameStart = value;
+        });
+        
+        Room newRoom = new Room(
+          roomName,
+          totalNum,
+          currentNum,
+          isLock,
+          isGameStart
+        );
+        
+        
+        rooms.add(newRoom);
+      });
+    }
   }
 
 // 방 전체 업데이트
