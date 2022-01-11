@@ -135,7 +135,7 @@ broadCastMessage(Function showMessage){
 gameStart(Function gameStart){
   _socket.on('game-start',(data){
     print("게임시작");
-    gameStart();
+    gameStart(data);
   });
 }
 
@@ -169,18 +169,11 @@ disconnectSocket() {
   _socket.disconnect();
 }
 
-// 정답
-// correctAnswer(Function giveScore){
-//   _socket.on('correct-answer', (data){
-//     giveScore(int.parse(data));
-//   });
-// }
-
 // 게임 종료
-gameOver(){
+gameOver(Function gameOver){
   print("게임종료");
   _socket.on('game-over', (data){
-    
+    gameOver();
   });
 }
 
