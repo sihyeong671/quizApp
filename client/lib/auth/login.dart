@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:client/main.dart';
 import 'package:client/provider/userID.dart';
+import 'package:client/utils/socketManager.dart';
 import 'package:flutter/material.dart';
 import 'package:client/lobby/lobby.dart';
 import 'package:http/http.dart' as http;
@@ -36,7 +37,6 @@ class _LogInState extends State<LogIn> {
     super.initState();
     _initKaKaoTalkInstalled();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +108,10 @@ class _LogInState extends State<LogIn> {
                                             jsonData.length == 1
                                               ? provider.add(jsonData[0]['userID'], jsonData[0]['nickName'], jsonData[0]['img'], jsonData[0]['score'], false) 
                                               : provider.add(jsonData['userID'], jsonData['nickName'], jsonData['img'], jsonData['score'], false);
+                                            
+                                            initSocket();
+                                            connectSocket();
+
                                             Navigator.push(context, 
                                               MaterialPageRoute(builder: (BuildContext context) => const Lobby()));
                                           } catch (e) {
@@ -129,6 +133,9 @@ class _LogInState extends State<LogIn> {
                                         var url = "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80";
                                         
                                         provider.add("0", name, url, 0, true);
+                                        
+                                        initSocket();
+                                        connectSocket();
                                         Navigator.push(context, 
                                           MaterialPageRoute(builder: (BuildContext context) => const Lobby()));
                                     },

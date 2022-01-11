@@ -131,6 +131,7 @@ void SelectedItem(BuildContext context, provider, item) {
       break;
     case 1:
       var code = UserApi.instance.logout();
+      disconnectSocket();
       Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (BuildContext context) => LogIn()));
       break;
@@ -170,8 +171,7 @@ void WidthrawalDialog(BuildContext context, provider,) {
               new TextButton(
                 child: new Text("아니요"),
                 onPressed: () {
-                  var code = UserApi.instance.unlink();
-                Navigator.pop(context);
+                  Navigator.pop(context);
                 },
               ),
               new TextButton(
@@ -180,11 +180,11 @@ void WidthrawalDialog(BuildContext context, provider,) {
                   var res = await http.delete(Uri.parse('http://192.249.18.158:80/user/${provider.myID}'));
                   print('delete: ${provider.myID}');
                   var code = UserApi.instance.unlink();
-                  disconnectSocket();
 
-                Navigator.pop(context);
-                Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (BuildContext context) => LogIn()));
+                  disconnectSocket();
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (BuildContext context) => LogIn()));
                 },
               ),
             ],
