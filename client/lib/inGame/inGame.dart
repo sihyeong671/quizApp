@@ -220,7 +220,6 @@ class _InGameState extends State<InGame> {
       showUsers = temp;
     });
       
-      
   }
   
 

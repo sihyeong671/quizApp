@@ -74,9 +74,7 @@ class _LogInState extends State<LogIn> {
                                 SizedBox(
                                   height: 700.0.sp,
                                 ),
-                                SizedBox(
-                                  width: 1000.0.sp,
-                                    height: 80.0.sp,
+                                ButtonTheme(
                                     child: TextButton(
                                         child: Image.asset('assets/kakao_login_wide.png'),
                                         onPressed: () async {
@@ -121,8 +119,8 @@ class _LogInState extends State<LogIn> {
                                     )
                                 ),
                                 SizedBox(
-                                  width: 875.0.sp,
-                                  height: 125.0.sp,
+                                  width: 960.0.sp,
+                                  height: 140.0.sp,
                                   child: ElevatedButton.icon(
                                     icon: Icon(Icons.add, size: 100.sp),
                                     label: const Text('게스트 로그인'),
