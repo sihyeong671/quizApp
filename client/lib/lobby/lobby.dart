@@ -74,96 +74,98 @@ class _LobbyState extends State<Lobby> {
       designSize: Size(1080, 2280),
       minTextAdapt: true,
       builder: () =>  
-        WillPopScope(
-        onWillPop: () {
-          return Future(() => false);
-        },
-        child: Scaffold(
-          floatingActionButton: FloatingButton(),
-          body: 
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Padding(padding: EdgeInsets.only(top: 30.0)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      ElevatedButton(
-                        child: Text('방만들기'),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) => roomModal()
-                          );
-                        },
-                      ),
-                      ElevatedButton(
-                        child: Text('빠른입장'),
-                        onPressed: () {
-                          quickEntry(provider.myName);
-                        },
-                      ),
-                    ],
-                  ),
-                  Container(
-                    height: 500,
-                    child: SmartRefresher(
-                      enablePullDown: true,
-                      // enablePullUp: true,
-                      header: WaterDropHeader(),
-                      controller: _refreshController,
-                      onRefresh: _onRefresh,
-                      // onLoading: _onLoading,
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        children: List.generate(rooms.length, (index) {
-                          return Card(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                ListTile(
-                                  leading: Text('${index+1}'),
-                                  title: Text('${rooms[index].roomName}'),
-                                  subtitle: Text('개발중'),
-                                  trailing: Text('${rooms[index].currentNum}/${rooms[index].totalNum}'),
-                                ),
-                                ButtonBar(
-                                  children: <Widget>[
-                                    TextButton(
-                                      child: Text('참가하기'),
-                                      onPressed: () {
-                                        joinRoom({
-                                          "roomName": rooms[index].roomName,
-                                          "name": provider.myName,
-                                          "img": provider.myImage
-                                        });
-                                        Navigator.push(context, 
-                                          MaterialPageRoute(builder: (BuildContext context) => InGame(roomName: rooms[index].roomName)));
-                                      },
-                                    )
-                                  ]
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    rooms[index].isLock ? Icon(Icons.lock_open_sharp) : Icon(Icons.lock_sharp),
-                                    rooms[index].isGameStart ? Text("게임 중") : Text("게임 전")
-                                  ],
-                                )
-                              ]
-                            )
-                          );
-                        }),
-                      ),
+        SafeArea(
+          child: WillPopScope(
+          onWillPop: () {
+            return Future(() => false);
+          },
+          child: Scaffold(
+            floatingActionButton: FloatingButton(),
+            body: 
+              SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        ElevatedButton(
+                          child: Text('방만들기'),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => roomModal()
+                            );
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text('빠른입장'),
+                          onPressed: () {
+                            quickEntry(provider.myName);
+                          },
+                        ),
+                      ],
                     ),
-                  ) 
-                ]
+                    Container(
+                      height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom - 130.0.sp,
+                      child: SmartRefresher(
+                        enablePullDown: true,
+                        // enablePullUp: true,
+                        header: WaterDropHeader(),
+                        controller: _refreshController,
+                        onRefresh: _onRefresh,
+                        // onLoading: _onLoading,
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          children: List.generate(rooms.length, (index) {
+                            return Card(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Text('${index+1}'),
+                                    title: Text('${rooms[index].roomName}'),
+                                    subtitle: Text('개발중'),
+                                    trailing: Text('${rooms[index].currentNum}/${rooms[index].totalNum}'),
+                                  ),
+                                  ButtonBar(
+                                    children: <Widget>[
+                                      TextButton(
+                                        child: Text('참가하기'),
+                                        onPressed: () {
+                                          joinRoom({
+                                            "roomName": rooms[index].roomName,
+                                            "name": provider.myName,
+                                            "img": provider.myImage
+                                          });
+                                          Navigator.push(context, 
+                                            MaterialPageRoute(builder: (BuildContext context) => InGame(roomName: rooms[index].roomName)));
+                                        },
+                                      )
+                                    ]
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      rooms[index].isLock ? Icon(Icons.lock_open_sharp) : Icon(Icons.lock_sharp),
+                                      rooms[index].isGameStart ? Text("게임 중") : Text("게임 전")
+                                    ],
+                                  )
+                                ]
+                              )
+                            );
+                          }),
+                        ),
+                      ),
+                    ) 
+                  ]
+                ),
+              )
+          ),
               ),
-            )
         ),
-      ),
     );
   }
 

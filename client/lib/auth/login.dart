@@ -74,9 +74,7 @@ class _LogInState extends State<LogIn> {
                                 SizedBox(
                                   height: 700.0.sp,
                                 ),
-                                SizedBox(
-                                  width: 1000.0.sp,
-                                    height: 80.0.sp,
+                                ButtonTheme(
                                     child: TextButton(
                                         child: Image.asset('assets/kakao_login_wide.png'),
                                         onPressed: () async {
