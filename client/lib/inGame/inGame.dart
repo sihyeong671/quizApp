@@ -27,12 +27,12 @@ class _InGameState extends State<InGame> {
   List<ChatMessage> chat = [];
   final ScrollController _scrollController = ScrollController();
 
-  late int currnetNum;
+  late int currentNum;
   late String problem;
   late String answer;
   late int myGameScore;
-  late bool isGameStart;
-  late bool isMeReady;
+  bool isGameStart = false;
+  bool isMeReady = false;
   List<List<dynamic>> users = [];
   List<Character> showUsers = [
     Character(
@@ -100,7 +100,6 @@ class _InGameState extends State<InGame> {
     await gameOver(_gameOver);
 
     //emit
-    await quizContent(_showQuizData);
     await requestRoomData(widget.roomName); // 데이터 요청
   }
   
@@ -181,7 +180,7 @@ class _InGameState extends State<InGame> {
     showUsers.clear();
     users.clear();
     List<Character> temp = [];
-    currnetNum = roomInfo["currentNum"];
+    currentNum = roomInfo["currentNum"];
     isGameStart = roomInfo["isGameStart"];
     problem = roomInfo["problem"];
     answer = roomInfo["answer"];
@@ -193,6 +192,7 @@ class _InGameState extends State<InGame> {
 
       users.add([v[0], v[1], v[2], v[3], v[4]]);
     });
+    
     users.forEach((v) {
 
       temp.add(Character(
@@ -256,7 +256,7 @@ class _InGameState extends State<InGame> {
     this.answer = answer;
   }
   
-  _showMessage(String msg){
+  _showMessage(String msg, String img){
     if(mounted){
       setState(() {
       chat.add(ChatMessage(isSender: false, text: msg));
@@ -351,7 +351,9 @@ class _CharacterState extends State<Character> {
     if(name.length > 6){
       _name = name.substring(0, 6)+'...';
     }
-    else _name = name;
+    else {
+      _name = name;
+    }
   }
   
   @override

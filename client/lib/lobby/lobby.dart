@@ -48,6 +48,7 @@ class _LobbyState extends State<Lobby> {
     // TODO: implement dispose
     // disconnectSocket();
     super.dispose();
+
   }
 
   @override
@@ -65,11 +66,11 @@ class _LobbyState extends State<Lobby> {
     await failToJoin(_showToastMessage);
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
 
-
-    
     return ScreenUtilInit(
       designSize: Size(1080, 2280),
       minTextAdapt: true,
@@ -170,38 +171,41 @@ class _LobbyState extends State<Lobby> {
   }
 
   _updateRoomData(data){
-    if (mounted){
-      setState(() {
-        List<Room> initRooms = [];
-        print(data);
-        data.forEach((k, v){
-          late int totalNum;
-          late int currentNum;
-          String roomName=k;
-          late bool isLock;
-          late bool isGameStart;
-          v.forEach((kk, vv){
+      
+      List<Room> initRooms = [];
+      print(data);
+      data.forEach((k, v){
+        late int totalNum;
+        late int currentNum;
+        String roomName=k;
+        late bool isLock;
+        late bool isGameStart;
+        v.forEach((kk, vv){
 
-            if(kk == 'totalNum') totalNum = vv;
-            else if(kk == 'currentNum') currentNum = vv;
-            else if(kk == 'isLock') isLock = vv;
-            else if(kk == 'isGameStart') isGameStart = vv;
+          if(kk == 'totalNum') totalNum = vv;
+          else if(kk == 'currentNum') currentNum = vv;
+          else if(kk == 'isLock') isLock = vv;
+          else if(kk == 'isGameStart') isGameStart = vv;
 
-          });
+        });
 
-          Room roomInstance = new Room(
-            roomName,
-            totalNum,
-            currentNum,
-            isLock,
-            isGameStart
-          );
+        Room roomInstance = new Room(
+          roomName,
+          totalNum,
+          currentNum,
+          isLock,
+          isGameStart
+        );
 
-          initRooms.add(roomInstance);
+        initRooms.add(roomInstance);
+        
+      });
+      if(mounted){
+        setState(() {
           rooms = initRooms;
         });
-      });
-    }
+      }
+    
   }
 
   _showToastMessage(data){
@@ -214,39 +218,6 @@ class _LobbyState extends State<Lobby> {
     );
   }
 
-// 방만들기
-  _updateInfo(data){
-    if (mounted){
-      setState(() {
-        late int totalNum;
-        late int currentNum;
-        late bool isLock;
-        late bool isGameStart;
-        String roomName = data.keys[0]; 
-        print(data.runtimeType);
-        data.forEach((name, value){
-          if(name == 'totalNum') totalNum = value;
-          else if(name == 'currentNum') currentNum = value;
-          else if(name == 'isLock') isLock = value;
-          else if(name == 'isGameStart') isGameStart = value;
-        });
-        
-        Room newRoom = new Room(
-          roomName,
-          totalNum,
-          currentNum,
-          isLock,
-          isGameStart
-        );
-        
-        
-        rooms.add(newRoom);
-      });
-    }
-  }
-
-// 방 전체 업데이트
-  
 
 }
 

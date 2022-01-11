@@ -83,7 +83,7 @@ pullToReFresh(){
 
 
 // inGame.dart
-requestRoomData(String? title){
+requestRoomData(String title){
   _socket.emit('request-inGame-data', title);
 }
 
@@ -127,7 +127,7 @@ sendMessage(String message, String roomName){
 // 메시지 브로드 캐스트f
 broadCastMessage(Function showMessage){
   _socket.on('receive-message', (data){
-    showMessage(data);
+    showMessage(data["msg"], data["img"]);
   });
 }
 
@@ -171,8 +171,8 @@ disconnectSocket() {
 
 // 게임 종료
 gameOver(Function gameOver){
-  print("게임종료");
   _socket.on('game-over', (data){
+    print("게임종료");
     gameOver();
   });
 }
