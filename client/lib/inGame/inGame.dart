@@ -40,7 +40,7 @@ class _InGameState extends State<InGame> {
   @override
   void dispose() {
     super.dispose();
-    
+
   }
 
   @override
@@ -143,8 +143,8 @@ class _InGameState extends State<InGame> {
         problem = roomInfo["problem"];
         answer = roomInfo["answer"];
         roomInfo["users"].forEach((v){
-          if(v[2] == provider.myName) isMeReady = v[3];
-          users.add([v[0], v[1], v[2], v[3]]);
+          if(v[2] == provider.myName) isMeReady = v[4];
+          users.add([v[0], v[1], v[2], v[3], v[4]]);
         });
 
         users.forEach((v) {
@@ -152,9 +152,8 @@ class _InGameState extends State<InGame> {
             id: v[0],
             score: v[1],
             name: v[2],
-            isReady: v[3],
-            // 임시방편 나중에 고쳐야함
-            img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+            img: v[3],
+            isReady: v[4],
           ));
         });
 
@@ -163,8 +162,8 @@ class _InGameState extends State<InGame> {
             id: '/',
             name: '',
             score: 0,
-            isReady: false,
             img: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+            isReady: false,
           ));
         }
 

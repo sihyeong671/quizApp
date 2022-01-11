@@ -127,7 +127,7 @@ class _LobbyState extends State<Lobby> {
                                       joinRoom({
                                         "roomName": rooms[index].roomName,
                                         "name": provider.myName,
-                                        // "img": provider.myImage
+                                        "img": provider.myImage
                                       });
                                       Navigator.push(context, 
                                         MaterialPageRoute(builder: (BuildContext context) => InGame(roomName: rooms[index].roomName)));
@@ -314,7 +314,7 @@ class _roomModalState extends State<roomModal> {
         ElevatedButton(
           onPressed: (){
             Navigator.pop(context);
-            makeRoom(_roomNameController.text, _lock, provider.myName);
+            makeRoom(_roomNameController.text, _lock, provider.myName, provider.myImage);
             Navigator.push(context, 
               MaterialPageRoute(builder: (BuildContext context) => InGame(
                 roomName: _roomNameController.text,

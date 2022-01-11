@@ -29,13 +29,13 @@ connectSocket(){
 }
 
 // 방 만들기
-makeRoom(String roomName, bool isLock, String name){
+makeRoom(String roomName, bool isLock, String name, String img){
   print("방만들기");
   Map dictionary = {
     "roomName": roomName,
     "isLock": isLock,
     "name": name,
-    // img: img
+    'img': img
   };
 
   _socket.emit('make-room',  dictionary); // 방 정보 전달
