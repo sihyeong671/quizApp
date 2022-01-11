@@ -1,6 +1,7 @@
 import 'package:client/lobby/lobby.dart';
 import 'package:client/myPage/myPage.dart';
 import 'package:client/ranking/ranking.dart';
+import 'package:client/utils/socketManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -41,6 +42,7 @@ class FloatingButton extends StatelessWidget {
               backgroundColor: Colors.blue,
               label: 'RANKING',
               onTap: () {
+                // disconnectSocket();
                 Navigator.pushReplacement(context, 
                   MaterialPageRoute(builder: (BuildContext context) => Ranking()));
               },
@@ -50,6 +52,7 @@ class FloatingButton extends StatelessWidget {
               backgroundColor: Colors.green,
               label: 'MY PAGE',
               onTap: () {
+                // disconnectSocket();
                 Navigator.pushReplacement(context, 
                   MaterialPageRoute(builder: (BuildContext context) => MyPage()));
               },

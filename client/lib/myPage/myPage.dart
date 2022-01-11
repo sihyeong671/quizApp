@@ -11,6 +11,8 @@ import 'package:client/main.dart';
 
 import 'dart:convert';
 import 'package:provider/provider.dart';
+import 'package:client/utils/socketManager.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 
@@ -49,70 +51,75 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        return Future(() => false);
-      },
-      child: Scaffold(
-          floatingActionButton: FloatingButton(),
-          body: Column(
-            children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 30.0)),
-              Container(
-                alignment: Alignment.centerRight,
-                child: PopupMenuButton(
-                  icon: Icon(Icons.settings),
-                  color: Colors.black,
-                  itemBuilder: (context) => [
-                    PopupMenuItem<int>(
-                      value: 0,
-                      child: Text("Setting", style: TextStyle(color: Colors.white),),
-                    ),
-                    PopupMenuItem<int>(
-                      value: 1,
-                      child: Text("로그아웃", style: TextStyle(color: Colors.white),),
-                    ),
-                    PopupMenuItem<int>(
-                      value: 2,
-                      child: Text("탈퇴하기", style: TextStyle(color: Colors.red),),
-                    ),
-                  ],
-                  onSelected: (item) => {SelectedItem(context, provider, item)},
+    return ScreenUtilInit(
+      designSize: Size(1080, 2280),
+      minTextAdapt: true,
+      builder: () => 
+        WillPopScope(
+        onWillPop: () {
+          return Future(() => false);
+        },
+        child: Scaffold(
+            floatingActionButton: FloatingButton(),
+            body: Column(
+              children: <Widget>[
+                Padding(padding: EdgeInsets.only(top: 150.0.sp)),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: PopupMenuButton(
+                    icon: Icon(Icons.settings),
+                    color: Colors.black,
+                    itemBuilder: (context) => [
+                      PopupMenuItem<int>(
+                        value: 0,
+                        child: Text("Setting", style: TextStyle(color: Colors.white),),
+                      ),
+                      PopupMenuItem<int>(
+                        value: 1,
+                        child: Text("로그아웃", style: TextStyle(color: Colors.white),),
+                      ),
+                      PopupMenuItem<int>(
+                        value: 2,
+                        child: Text("탈퇴하기", style: TextStyle(color: Colors.red),),
+                      ),
+                    ],
+                    onSelected: (item) => {SelectedItem(context, provider, item)},
+                  ),
                 ),
-              ),
-              Padding(padding: EdgeInsets.only(top: 100.0)),
-              Center(
-                child: CircleAvatar(
-                  radius: 70.0,
-                  // backgroundImage: AssetImage('assets/cutesexy.jpeg'),
-                  backgroundImage: NetworkImage(_image),
-                )
-              ),
-              SizedBox(
-                height: 40.0
-              ),
-              Text('이름 : ${_name}'),
-              SizedBox(
-                height: 40.0
-              ),
-              if(!_isGuest)...[
-              Text('점수 : ${_score}'),
-              SizedBox(
-                height: 40.0
-              ),
-              Text('랭킹 : 1'),
-              SizedBox(
-                height: 40.0
-              ),
-              Text('최고 점수 : -'),
-              SizedBox(
-                height: 40.0
-              ),
-              Text('최고 랭킹 : -'),
-              ]
-            ],
+                Padding(padding: EdgeInsets.only(top: 150.0.sp)),
+                Center(
+                  child: CircleAvatar(
+                    radius: 300.0.sp,
+                    // backgroundImage: AssetImage('assets/cutesexy.jpeg'),
+                    backgroundImage: NetworkImage(_image),
+                  )
+                ),
+                SizedBox(
+                  height: 200.0.sp
+                ),
+                Text('이름 : ${_name}'),
+                SizedBox(
+                  height: 40.0.sp
+                ),
+                if(!_isGuest)...[
+                Text('점수 : ${_score}'),
+                SizedBox(
+                  height: 40.0.sp
+                ),
+                Text('랭킹 : 1'),
+                SizedBox(
+                  height: 40.0.sp
+                ),
+                Text('최고 점수 : -'),
+                SizedBox(
+                  height: 40.0.sp
+                ),
+                Text('최고 랭킹 : -'),
+                ]
+              ],
+            ),
           ),
-        ),
+      ),
     );
   }
 }
@@ -124,6 +131,7 @@ void SelectedItem(BuildContext context, provider, item) {
       break;
     case 1:
       var code = UserApi.instance.logout();
+      disconnectSocket();
       Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (BuildContext context) => LogIn()));
       break;
@@ -142,7 +150,7 @@ void WidthrawalDialog(BuildContext context, provider,) {
           return AlertDialog(
             // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+                borderRadius: BorderRadius.circular(10.0.sp)),
             //Dialog Main Title
             title: Column(
               children: <Widget>[
@@ -163,8 +171,7 @@ void WidthrawalDialog(BuildContext context, provider,) {
               new TextButton(
                 child: new Text("아니요"),
                 onPressed: () {
-                  var code = UserApi.instance.unlink();
-                Navigator.pop(context);
+                  Navigator.pop(context);
                 },
               ),
               new TextButton(
@@ -173,9 +180,11 @@ void WidthrawalDialog(BuildContext context, provider,) {
                   var res = await http.delete(Uri.parse('http://192.249.18.158:80/user/${provider.myID}'));
                   print('delete: ${provider.myID}');
                   var code = UserApi.instance.unlink();
-                Navigator.pop(context);
-                Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (BuildContext context) => LogIn()));
+
+                  disconnectSocket();
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (BuildContext context) => LogIn()));
                 },
               ),
             ],

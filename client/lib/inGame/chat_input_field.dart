@@ -13,11 +13,10 @@ class ChatInputField extends StatefulWidget {
 
 class _ChatInputFieldState extends State<ChatInputField> {
 
-  TextEditingController _msgController = TextEditingController();
+  final TextEditingController _msgController = TextEditingController();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

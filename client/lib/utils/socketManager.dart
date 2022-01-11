@@ -170,6 +170,10 @@ quizContent(Function showQuizData){
 //   });
 // }
 
+disconnectSocket() {
+  _socket.disconnect();
+}
+
 // 정답
 // correctAnswer(Function giveScore){
 //   _socket.on('correct-answer', (data){
