@@ -43,10 +43,17 @@ class _LobbyState extends State<Lobby> {
   //   _refreshController.loadComplete();
   // }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    socketDisconnect();
+  }
 
   @override
   void initState() {
     super.initState();
+
     initSocket();
     _initSocketListener();
     connectSocket();

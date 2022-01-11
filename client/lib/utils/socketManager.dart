@@ -9,23 +9,24 @@ late final IO.Socket _socket;
 
 // 소켓 설정
 initSocket(){
-  _socket = IO.io('http://192.249.18.158:80',
+
+    _socket= IO.io('http://192.249.18.158:80',
     IO.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()
       .build());
+  }
+  
   // _socket = IO.io('http://localhost:8080',
   //   IO.OptionBuilder()
   //     .setTransports(['websocket'])
   //     .disableAutoConnect()
   //     .build());
-}
 
 // 소켓 연결
 connectSocket(){
   _socket.connect();
 }
-
 
 // 방 만들기
 makeRoom(String roomName, bool isLock, String name){
@@ -182,4 +183,8 @@ gameOver(){
   _socket.on('game-over', (data){
     
   });
+}
+
+socketDisconnect(){
+  _socket.disconnect();
 }
