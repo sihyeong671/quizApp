@@ -27,10 +27,10 @@ class _InGameState extends State<InGame> {
   List<ChatMessage> chat = [];
   final ScrollController _scrollController = ScrollController();
 
-  late int currnetNum; 
+  late int currnetNum;
   late String problem;
-  late String answer; 
-  late int gameScore;
+  late String answer;
+  late int myGameScore;
   late bool isGameStart;
   late bool isMeReady;
   List<List<dynamic>> users = [];
@@ -97,7 +97,8 @@ class _InGameState extends State<InGame> {
     await getInGameData(_updateInGameData);
     await broadCastMessage(_showMessage);
     await gameStart(_gameStart);
-    await gameOver();
+    await gameOver(_gameOver);
+
     //emit
     await quizContent(_showQuizData);
     await requestRoomData(widget.roomName); // 데이터 요청
@@ -185,7 +186,11 @@ class _InGameState extends State<InGame> {
     problem = roomInfo["problem"];
     answer = roomInfo["answer"];
     roomInfo["users"].forEach((v){
-      if(v[2] == provider.myName) isMeReady = v[4];
+      if(v[2] == provider.myName) {
+        myGameScore = v[1];
+        isMeReady = v[4];
+      }
+
       users.add([v[0], v[1], v[2], v[3], v[4]]);
     });
     users.forEach((v) {
@@ -200,7 +205,6 @@ class _InGameState extends State<InGame> {
     });
 
     print(temp);
-
 
     while(temp.length < 6){
       temp.add(Character(
@@ -220,10 +224,30 @@ class _InGameState extends State<InGame> {
   }
   
 
-  _gameStart(){
+  _gameStart(data){
     if(mounted){
       setState(() {
         isGameStart = true;
+        problem = data["problem"];
+        answer = data["answer"];
+      });
+    }
+  }
+
+  _gameOver(){
+    if(mounted){
+      setState(() {
+        isGameStart = false;
+        myGameScore = 0;
+        isMeReady = false;
+      });
+    }
+  }
+
+  _giveScore(String id, int scoreAdd){
+    if(mounted){
+      setState(() {
+        
       });
     }
   }
@@ -278,11 +302,6 @@ class _InGameState extends State<InGame> {
     
   // }
 
-  _giveScore(int score){
-    setState(() {
-      gameScore += 5;
-    });
-  }
 
   // _runTimerChange(){
   //   print("시간 줄이기");
@@ -320,11 +339,20 @@ class Character extends StatefulWidget {
 class _CharacterState extends State<Character> {
 
   late bool isEmpty;
+  late String _name;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _sliceName(widget.name);
+  }
+
+  _sliceName(String name){
+    if(name.length > 6){
+      _name = name.substring(0, 6)+'...';
+    }
+    else _name = name;
   }
   
   @override
@@ -337,8 +365,11 @@ class _CharacterState extends State<Character> {
       isEmpty = false;
     }
 
+
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Text(widget.score.toString()),
         Row(
           children: <Widget>[
             SizedBox(
@@ -360,7 +391,7 @@ class _CharacterState extends State<Character> {
             )
           ],
         ),
-        Text(widget.name)
+        Text(_name)
       ],
     );
   }
